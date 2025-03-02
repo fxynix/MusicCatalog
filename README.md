@@ -31,4 +31,6 @@ Music Catalog — это приложения для управления муз
 ## Sonar Cloud
 [Sonar](https://sonarcloud.io/project/overview?id=fxynix_MusicCatalog)
 
+---
+
 ### Порт: 7777
