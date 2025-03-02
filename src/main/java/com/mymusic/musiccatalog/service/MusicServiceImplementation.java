@@ -1,9 +1,9 @@
 package com.mymusic.musiccatalog.service;
 
+import com.mymusic.musiccatalog.Music;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-import com.mymusic.musiccatalog.Music;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,10 +20,10 @@ public class MusicServiceImplementation implements MusicService {
 
                     Music.builder()
                             .id(1)
-                            .name("Зомби апокалипсис")
+                            .name("Золотые купола")
                             .author("Серега Пират")
                             .album("Сингл")
-                            .duration(Duration.ofSeconds(163))
+                            .duration(Duration.ofSeconds(156))
                             .build(),
 
                     Music.builder()
@@ -38,7 +38,7 @@ public class MusicServiceImplementation implements MusicService {
                             .id(3)
                             .name("Judas")
                             .author("Lady Gaga")
-                            .album("Сингл")
+                            .album("Born this way")
                             .duration(Duration.ofSeconds(250))
                             .build()
             )

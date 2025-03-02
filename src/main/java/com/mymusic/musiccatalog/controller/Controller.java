@@ -1,8 +1,8 @@
 package com.mymusic.musiccatalog.controller;
 
-import java.util.List;
-import com.mymusic.musiccatalog.service.MusicService;
 import com.mymusic.musiccatalog.Music;
+import com.mymusic.musiccatalog.service.MusicService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,16 +20,13 @@ public class Controller {
         this.musicService = musicService;
     }
 
-    @GetMapping
+    @GetMapping("/id")
     public Music getMusicById(@RequestParam int id) {
         return musicService.getMusicById(id);
     }
 
-    @GetMapping("/{name}")
+    @GetMapping("/name/{name}")
     public List<Music> getMusicByName(@PathVariable String name) {
         return musicService.getMusicByName(name);
     }
-
-
-
 }
