@@ -3,7 +3,7 @@ package musiccatalog.service;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-import musiccatalog.Music;
+import musiccatalog.model.Music;
 import org.springframework.stereotype.Service;
 
 @Service
