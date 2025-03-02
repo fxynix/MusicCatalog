@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
+import java.time.Duration;
 
 @Component
 @Data
@@ -18,6 +19,6 @@ public class Music {
     private String name;
     private String author;
     private String album;
-    private int duration;
+    private Duration duration;
 
 }
