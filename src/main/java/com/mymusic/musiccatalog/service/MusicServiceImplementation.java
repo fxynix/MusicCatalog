@@ -21,7 +21,7 @@ public class MusicServiceImplementation implements MusicService {
                     Music.builder()
                             .id(1)
                             .name("Золотые купола")
-                            .author("Серега Пират")
+                            .author("Norman")
                             .album("Сингл")
                             .duration(Duration.ofSeconds(156))
                             .build(),
