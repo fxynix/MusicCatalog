@@ -1,4 +1,4 @@
-package com.mymusic.musiccatalog;
+package musiccatalog;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.Duration;

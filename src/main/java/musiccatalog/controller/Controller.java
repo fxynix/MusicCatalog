@@ -1,8 +1,8 @@
-package com.mymusic.musiccatalog.controller;
+package musiccatalog.controller;
 
-import com.mymusic.musiccatalog.Music;
-import com.mymusic.musiccatalog.service.MusicService;
 import java.util.List;
+import musiccatalog.Music;
+import musiccatalog.service.MusicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

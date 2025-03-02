@@ -1,4 +1,4 @@
-package com.mymusic.musiccatalog;
+package musiccatalog;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

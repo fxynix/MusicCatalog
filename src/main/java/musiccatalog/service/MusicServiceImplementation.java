@@ -1,9 +1,9 @@
-package com.mymusic.musiccatalog.service;
+package musiccatalog.service;
 
-import com.mymusic.musiccatalog.Music;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import musiccatalog.Music;
 import org.springframework.stereotype.Service;
 
 @Service
