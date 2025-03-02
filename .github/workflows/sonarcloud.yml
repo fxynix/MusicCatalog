@@ -57,6 +57,8 @@ jobs:
             # mandatory
             -Dsonar.projectKey=353400d1ace79ee42ba80db8bc6d1d6b410bd4ba
             -Dsonar.organization=fxynix
+            -Dsonar.host.url=https://sonarcloud.io 
+            -Dsonar.qualitygate.wait=true
             # Comma-separated paths to directories containing main source files.
             #-Dsonar.sources= # optional, default is project base directory
             # Comma-separated paths to directories containing test source files.
