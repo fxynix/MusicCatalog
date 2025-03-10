@@ -25,13 +25,8 @@ public class Controller {
         return musicService.getMusicById(id);
     }
 
-    @GetMapping("name/{name}")
-    public List<Music> getMusicByNamePath(@PathVariable String name) {
-        return musicService.getMusicByName(name);
-    }
-
-    @GetMapping("id/{id}")
-    public Music getMusicByIdPath(@PathVariable int id) {
+    @GetMapping("{id}")
+    public Music getMusicById(@PathVariable int id) {
         return musicService.getMusicById(id);
     }
 
