@@ -20,19 +20,23 @@ public class Controller {
         this.musicService = musicService;
     }
 
-    @GetMapping
-    public Music getMusicByIdParam(@RequestParam int id) {
+    @GetMapping(params = "id")
+    public Music getMusicById(@RequestParam int id) {
         return musicService.getMusicById(id);
     }
 
-    @GetMapping("/name/{name}")
+    @GetMapping("name/{name}")
     public List<Music> getMusicByName(@PathVariable String name) {
         return musicService.getMusicByName(name);
     }
 
-    @GetMapping("/id/{id}")
+    @GetMapping("id/{id}")
     public Music getMusicByIdPath(@PathVariable int id) {
         return musicService.getMusicById(id);
     }
 
+    @GetMapping(params = "name")
+    public List<Music> getMusicByNameParam(@RequestParam String name) {
+        return musicService.getMusicByName(name);
+    }
 }
