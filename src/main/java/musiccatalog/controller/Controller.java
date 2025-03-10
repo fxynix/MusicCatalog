@@ -22,15 +22,6 @@ public class Controller {
         this.musicService = musicService;
     }
 
-    @GetMapping(params = "id")
-    public Music getMusicByIdParam(@RequestParam int id) {
-        Music mymusic = musicService.getMusicById(id);
-        if (mymusic == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Music not found");
-        }
-        return mymusic;
-    }
-
     @GetMapping("{id}")
     public Music getMusicById(@PathVariable int id) {
         Music music = musicService.getMusicById(id);
