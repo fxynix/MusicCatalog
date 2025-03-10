@@ -21,12 +21,18 @@ public class Controller {
     }
 
     @GetMapping
-    public Music getMusicById(@RequestParam int id) {
+    public Music getMusicByIdParam(@RequestParam int id) {
         return musicService.getMusicById(id);
     }
 
-    @GetMapping("/{name}")
+    @GetMapping("/name/{name}")
     public List<Music> getMusicByName(@PathVariable String name) {
         return musicService.getMusicByName(name);
     }
+
+    @GetMapping("/id/{id}")
+    public Music getMusicByIdPath(@PathVariable int id) {
+        return musicService.getMusicById(id);
+    }
+
 }
