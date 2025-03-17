@@ -3,7 +3,11 @@ package musiccatalog.service.impl;
 import java.util.List;
 import musiccatalog.dto.create.TrackCreateDto;
 import musiccatalog.dto.update.TrackUpdateDto;
+import musiccatalog.model.Album;
+import musiccatalog.model.Genre;
 import musiccatalog.model.Track;
+import musiccatalog.repository.AlbumRepository;
+import musiccatalog.repository.GenreRepository;
 import musiccatalog.repository.TrackRepository;
 import musiccatalog.service.TrackService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +19,15 @@ import org.springframework.web.server.ResponseStatusException;
 public class TrackServiceImpl implements TrackService {
 
     private final TrackRepository trackRepository;
+    private final AlbumRepository albumRepository;
+    private final GenreRepository genreRepository;
 
     @Autowired
-    public TrackServiceImpl(TrackRepository trackRepository) {
+    public TrackServiceImpl(TrackRepository trackRepository,
+                            AlbumRepository albumRepository, GenreRepository genreRepository) {
         this.trackRepository = trackRepository;
+        this.albumRepository = albumRepository;
+        this.genreRepository = genreRepository;
     }
 
     @Override
@@ -45,12 +54,15 @@ public class TrackServiceImpl implements TrackService {
     public Track createTrack(TrackCreateDto trackDto) {
         Track track = new Track();
         track.setName(trackDto.getName());
-        track.setId(trackDto.getId());
         track.setDuration(trackDto.getDuration());
         track.setTrackNumber(trackDto.getTrackNumber());
-        track.setAlbum(trackDto.getAlbum());
-        track.setGenres(trackDto.getGenres());
-        track.setLikedByUsers(trackDto.getLikedByUsers());
+        Album album = albumRepository.findById(trackDto.getAlbumId())
+                .orElseThrow(()
+                        -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Artist not found"));
+        track.setAlbum(album);
+        List<Genre> genres = genreRepository.findAllById(trackDto.getGenresIds());
+        track.setGenres(genres);
+
         return trackRepository.save(track);
     }
 
@@ -60,14 +72,13 @@ public class TrackServiceImpl implements TrackService {
         if (track == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Track not found");
         }
-        if (trackDto.getAlbum() != null) {
-            track.setAlbum(trackDto.getAlbum());
+        if (trackDto.getAlbumId() != null) {
+            track.setAlbum(albumRepository.findById(trackDto.getAlbumId())
+                .orElseThrow(()
+                    -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Artist not found")));
         }
         if (trackDto.getName() != null) {
             track.setName(trackDto.getName());
-        }
-        if (trackDto.getId() != null) {
-            track.setId(trackDto.getId());
         }
         if (trackDto.getTrackNumber() != 0) {
             track.setTrackNumber(trackDto.getTrackNumber());
@@ -75,8 +86,8 @@ public class TrackServiceImpl implements TrackService {
         if (trackDto.getDuration() != 0) {
             track.setDuration(trackDto.getDuration());
         }
-        if (trackDto.getGenres() != null) {
-            track.setGenres(trackDto.getGenres());
+        if (trackDto.getGenresIds() != null) {
+            track.setGenres(genreRepository.findAllById(trackDto.getGenresIds()));
         }
         return trackRepository.save(track);
     }
@@ -85,4 +96,5 @@ public class TrackServiceImpl implements TrackService {
     public void deleteTrack(Long id) {
         trackRepository.deleteById(id);
     }
+
 }

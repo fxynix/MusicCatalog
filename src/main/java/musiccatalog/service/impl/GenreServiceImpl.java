@@ -4,7 +4,9 @@ import java.util.List;
 import musiccatalog.dto.create.GenreCreateDto;
 import musiccatalog.dto.update.GenreUpdateDto;
 import musiccatalog.model.Genre;
+import musiccatalog.model.Track;
 import musiccatalog.repository.GenreRepository;
+import musiccatalog.repository.TrackRepository;
 import musiccatalog.service.GenreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,10 +18,12 @@ import org.springframework.web.server.ResponseStatusException;
 public class GenreServiceImpl implements GenreService {
 
     private final GenreRepository genreRepository;
+    private final TrackRepository trackRepository;
 
     @Autowired
-    public GenreServiceImpl(GenreRepository genreRepository) {
+    public GenreServiceImpl(GenreRepository genreRepository, TrackRepository trackRepository) {
         this.genreRepository = genreRepository;
+        this.trackRepository = trackRepository;
     }
 
     @Override
@@ -47,8 +51,8 @@ public class GenreServiceImpl implements GenreService {
     public Genre createGenre(GenreCreateDto genreDto) {
         Genre genre = new Genre();
         genre.setName(genreDto.getName());
-        genre.setId(genreDto.getId());
-        genre.setTracks(genreDto.getTracks());
+        List<Track> tracks = trackRepository.findAllById(genreDto.getTracksIds());
+        genre.setTracks(tracks);
         return genreRepository.save(genre);
     }
 
@@ -58,14 +62,11 @@ public class GenreServiceImpl implements GenreService {
         if (genre == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Genre not found");
         }
-        if (genreDto.getTracks() != null) {
-            genre.setTracks(genreDto.getTracks());
+        if (genreDto.getTracksIds() != null) {
+            genre.setTracks(trackRepository.findAllById(genreDto.getTracksIds()));
         }
         if (genreDto.getName() != null) {
             genre.setName(genreDto.getName());
-        }
-        if (genreDto.getId() != null) {
-            genre.setId(genreDto.getId());
         }
         return genreRepository.save(genre);
     }
@@ -74,4 +75,5 @@ public class GenreServiceImpl implements GenreService {
     public void deleteGenre(Long id) {
         genreRepository.deleteById(id);
     }
+
 }

@@ -4,7 +4,11 @@ import java.util.List;
 import musiccatalog.dto.create.AlbumCreateDto;
 import musiccatalog.dto.update.AlbumUpdateDto;
 import musiccatalog.model.Album;
+import musiccatalog.model.Artist;
+import musiccatalog.model.Track;
 import musiccatalog.repository.AlbumRepository;
+import musiccatalog.repository.ArtistRepository;
+import musiccatalog.repository.TrackRepository;
 import musiccatalog.service.AlbumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,10 +19,15 @@ import org.springframework.web.server.ResponseStatusException;
 public class AlbumServiceImpl implements AlbumService {
 
     private final AlbumRepository albumRepository;
+    private final ArtistRepository artistRepository;
+    private final TrackRepository trackRepository;
 
     @Autowired
-    public AlbumServiceImpl(AlbumRepository albumRepository) {
+    public AlbumServiceImpl(AlbumRepository albumRepository, ArtistRepository artistRepository,
+                            TrackRepository trackRepository) {
         this.albumRepository = albumRepository;
+        this.artistRepository = artistRepository;
+        this.trackRepository = trackRepository;
     }
 
     @Override
@@ -45,9 +54,10 @@ public class AlbumServiceImpl implements AlbumService {
     public Album createAlbum(AlbumCreateDto albumDto) {
         Album album = new Album();
         album.setName(albumDto.getName());
-        album.setId(albumDto.getId());
-        album.setArtists(albumDto.getArtists());
-        album.setTracks(albumDto.getTracks());
+        List<Artist> artists = artistRepository.findAllById(albumDto.getArtistsIds());
+        album.setArtists(artists);
+        List<Track> tracks = trackRepository.findAllById(albumDto.getTracksIds());
+        album.setTracks(tracks);
         return albumRepository.save(album);
     }
 
@@ -57,17 +67,14 @@ public class AlbumServiceImpl implements AlbumService {
         if (album == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Album not found");
         }
-        if (albumDto.getArtists() != null) {
-            album.setArtists(albumDto.getArtists());
+        if (albumDto.getArtistsIds() != null) {
+            album.setArtists(artistRepository.findAllById(albumDto.getArtistsIds()));
         }
-        if (albumDto.getTracks() != null) {
-            album.setTracks(albumDto.getTracks());
+        if (albumDto.getTracksIds() != null) {
+            album.setTracks(trackRepository.findAllById(albumDto.getTracksIds()));
         }
         if (albumDto.getName() != null) {
             album.setName(albumDto.getName());
-        }
-        if (albumDto.getId() != null) {
-            album.setId(albumDto.getId());
         }
         return albumRepository.save(album);
     }
@@ -76,4 +83,5 @@ public class AlbumServiceImpl implements AlbumService {
     public void deleteAlbum(Long id) {
         albumRepository.deleteById(id);
     }
+
 }

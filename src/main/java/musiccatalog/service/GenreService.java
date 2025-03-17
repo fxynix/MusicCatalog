@@ -19,4 +19,5 @@ public interface GenreService {
     Genre updateGenre(long id, GenreUpdateDto genreDto);
 
     void deleteGenre(Long id);
+
 }

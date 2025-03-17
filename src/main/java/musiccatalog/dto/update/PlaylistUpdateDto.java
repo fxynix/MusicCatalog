@@ -1,21 +1,16 @@
 package musiccatalog.dto.update;
 
-import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import lombok.Data;
-import musiccatalog.model.Track;
-import musiccatalog.model.User;
 
 @Data
 public class PlaylistUpdateDto {
-    @NotNull
-    private Long id;
 
     private String name;
 
-    private List<Track> tracks;
+    private List<Long> tracksIds;
 
-    private User author;
+    private Long authorId;
 
-    private List<User> subscribers;
+    private List<Long> subscribersIds;
 }

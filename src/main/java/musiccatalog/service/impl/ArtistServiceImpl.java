@@ -3,8 +3,12 @@ package musiccatalog.service.impl;
 import java.util.List;
 import musiccatalog.dto.create.ArtistCreateDto;
 import musiccatalog.dto.update.ArtistUpdateDto;
+import musiccatalog.model.Album;
 import musiccatalog.model.Artist;
+import musiccatalog.model.User;
+import musiccatalog.repository.AlbumRepository;
 import musiccatalog.repository.ArtistRepository;
+import musiccatalog.repository.UserRepository;
 import musiccatalog.service.ArtistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,10 +20,15 @@ import org.springframework.web.server.ResponseStatusException;
 public class ArtistServiceImpl implements ArtistService {
 
     private final ArtistRepository artistRepository;
+    private final AlbumRepository albumRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public ArtistServiceImpl(ArtistRepository artistRepository) {
+    public ArtistServiceImpl(ArtistRepository artistRepository, AlbumRepository albumRepository,
+            UserRepository userRepository) {
         this.artistRepository = artistRepository;
+        this.albumRepository = albumRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -47,9 +56,10 @@ public class ArtistServiceImpl implements ArtistService {
     public Artist createArtist(ArtistCreateDto artistDto) {
         Artist artist = new Artist();
         artist.setName(artistDto.getName());
-        artist.setId(artistDto.getId());
-        artist.setAlbums(artistDto.getAlbums());
-        artist.setLikedByUsers(artistDto.getLikedByUsers());
+        List<Album> albums = albumRepository.findAllById(artistDto.getAlbumsIds());
+        artist.setAlbums(albums);
+        List<User> users = userRepository.findAllById(artistDto.getLikedByUsersIds());
+        artist.setLikedByUsers(users);
         return artistRepository.save(artist);
     }
 
@@ -59,17 +69,14 @@ public class ArtistServiceImpl implements ArtistService {
         if (artist == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Artist not found");
         }
-        if (artistDto.getAlbums() != null) {
-            artist.setAlbums(artistDto.getAlbums());
+        if (artistDto.getAlbumsIds() != null) {
+            artist.setAlbums(albumRepository.findAllById(artistDto.getAlbumsIds()));
         }
         if (artistDto.getName() != null) {
             artist.setName(artistDto.getName());
         }
-        if (artistDto.getId() != null) {
-            artist.setId(artistDto.getId());
-        }
-        if (artistDto.getLikedByUsers() != null) {
-            artist.setLikedByUsers(artistDto.getLikedByUsers());
+        if (artistDto.getLikedByUsersIds() != null) {
+            artist.setLikedByUsers(userRepository.findAllById(artistDto.getLikedByUsersIds()));
         }
         return artistRepository.save(artist);
     }
@@ -78,4 +85,5 @@ public class ArtistServiceImpl implements ArtistService {
     public void deleteArtist(Long id) {
         artistRepository.deleteById(id);
     }
+
 }

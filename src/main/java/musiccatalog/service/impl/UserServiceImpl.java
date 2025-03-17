@@ -3,7 +3,13 @@ package musiccatalog.service.impl;
 import java.util.List;
 import musiccatalog.dto.create.UserCreateDto;
 import musiccatalog.dto.update.UserUpdateDto;
+import musiccatalog.model.Artist;
+import musiccatalog.model.Playlist;
+import musiccatalog.model.Track;
 import musiccatalog.model.User;
+import musiccatalog.repository.ArtistRepository;
+import musiccatalog.repository.PlaylistRepository;
+import musiccatalog.repository.TrackRepository;
 import musiccatalog.repository.UserRepository;
 import musiccatalog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +21,17 @@ import org.springframework.web.server.ResponseStatusException;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final ArtistRepository artistRepository;
+    private final PlaylistRepository playlistRepository;
+    private final TrackRepository trackRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, ArtistRepository artistRepository,
+                           PlaylistRepository playlistRepository, TrackRepository trackRepository) {
         this.userRepository = userRepository;
+        this.artistRepository = artistRepository;
+        this.playlistRepository = playlistRepository;
+        this.trackRepository = trackRepository;
     }
 
     @Override
@@ -46,12 +59,14 @@ public class UserServiceImpl implements UserService {
     public User createUser(UserCreateDto userDto) {
         User user = new User();
         user.setName(userDto.getName());
-        user.setId(userDto.getId());
         user.setEmail(userDto.getEmail());
         user.setPassword(userDto.getPassword());
-        user.setLikedArtists(userDto.getLikedArtists());
-        user.setPlaylists(userDto.getPlaylists());
-        user.setLikedTracks(userDto.getLikedTracks());
+        List<Artist> likedArtists = artistRepository.findAllById(userDto.getLikedArtistsIds());
+        user.setLikedArtists(likedArtists);
+        List<Playlist> playlists = playlistRepository.findAllById(userDto.getPlaylistsIds());
+        user.setPlaylists(playlists);
+        List<Track> likedTracks = trackRepository.findAllById(userDto.getLikedTracksIds());
+        user.setLikedTracks(likedTracks);
         return userRepository.save(user);
     }
 
@@ -64,23 +79,20 @@ public class UserServiceImpl implements UserService {
         if (userDto.getName() != null) {
             genre.setName(userDto.getName());
         }
-        if (userDto.getId() != null) {
-            genre.setId(userDto.getId());
-        }
         if (userDto.getEmail() != null) {
             genre.setEmail(userDto.getEmail());
         }
         if (userDto.getPassword() != null) {
             genre.setPassword(userDto.getPassword());
         }
-        if (userDto.getLikedArtists() != null) {
-            genre.setLikedArtists(userDto.getLikedArtists());
+        if (userDto.getLikedArtistsIds() != null) {
+            genre.setLikedArtists(artistRepository.findAllById(userDto.getLikedArtistsIds()));
         }
-        if (userDto.getPlaylists() != null) {
-            genre.setPlaylists(userDto.getPlaylists());
+        if (userDto.getPlaylistsIds() != null) {
+            genre.setPlaylists(playlistRepository.findAllById(userDto.getPlaylistsIds()));
         }
-        if (userDto.getLikedTracks() != null) {
-            genre.setLikedTracks(userDto.getLikedTracks());
+        if (userDto.getLikedTracksIds() != null) {
+            genre.setLikedTracks(trackRepository.findAllById(userDto.getLikedTracksIds()));
         }
         return userRepository.save(genre);
     }
@@ -89,4 +101,5 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
+
 }

@@ -19,4 +19,5 @@ public interface PlaylistService {
     Playlist updatePlaylist(long id, PlaylistUpdateDto playlistDto);
 
     void deletePlaylist(Long id);
+
 }
