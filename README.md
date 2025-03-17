@@ -25,12 +25,10 @@ Music Catalog — это приложения для управления муз
 - Язык программирования: Java 23
 - Фреймворк: Spring Boot 3.4.3
 - Сборка: Maven
-
+- База данных: PostgreSQL
 ---
 
 ## Sonar Cloud
 [Sonar](https://sonarcloud.io/project/overview?id=fxynix_MusicCatalog)
 
 ---
-
-### Порт: 7777
