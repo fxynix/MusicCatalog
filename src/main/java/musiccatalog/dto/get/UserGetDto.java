@@ -11,17 +11,18 @@ import musiccatalog.model.User;
 public class UserGetDto {
     private Long id;
     private String name;
-    private List<String> playlists;
+    private List<String> playlistsCreated;
+    private List<String> playlistsLiked;
     private int likedArtistsCount;
     private int likedTracksCount;
 
     public UserGetDto(User user) {
         this.id = user.getId();
         this.name = user.getName();
-        this.playlists = user.getPlaylistsCreated().stream()
+        this.playlistsCreated = user.getPlaylistsCreated().stream()
                 .map(Playlist::getName)
                 .toList();
-        this.playlists = user.getPlaylistsSubscribed().stream()
+        this.playlistsLiked = user.getPlaylistsSubscribed().stream()
                 .map(Playlist::getName)
                 .toList();
         this.likedTracksCount = user.getLikedTracks().size();

@@ -60,6 +60,9 @@ public class GenreServiceImpl implements GenreService {
     @Override
     public Genre updateGenre(long id, GenreUpdateDto genreDto) {
         Genre genre = getGenreById(id);
+        if (genreRepository.findByName(genreDto.getName()) != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Genre name already exists");
+        }
         if (genre == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Genre not found");
         }

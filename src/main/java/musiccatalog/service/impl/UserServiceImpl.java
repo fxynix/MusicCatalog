@@ -54,6 +54,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User createUser(UserCreateDto userDto) {
+        if (userRepository.findByEmail(userDto.getEmail()) != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email name already exists");
+        }
         User user = new User();
         user.setName(userDto.getName());
         user.setEmail(userDto.getEmail());
@@ -64,6 +67,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateUser(long id, UserUpdateDto userDto) {
         User user = getUserById(id);
+        if (userRepository.findByEmail(userDto.getEmail()) != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email name already exists");
+        }
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
