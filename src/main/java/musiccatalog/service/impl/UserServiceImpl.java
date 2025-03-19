@@ -1,13 +1,12 @@
 package musiccatalog.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import musiccatalog.dto.create.UserCreateDto;
 import musiccatalog.dto.update.UserUpdateDto;
-import musiccatalog.model.Artist;
 import musiccatalog.model.Playlist;
 import musiccatalog.model.Track;
 import musiccatalog.model.User;
-import musiccatalog.repository.ArtistRepository;
 import musiccatalog.repository.PlaylistRepository;
 import musiccatalog.repository.TrackRepository;
 import musiccatalog.repository.UserRepository;
@@ -21,15 +20,13 @@ import org.springframework.web.server.ResponseStatusException;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final ArtistRepository artistRepository;
     private final PlaylistRepository playlistRepository;
     private final TrackRepository trackRepository;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, ArtistRepository artistRepository,
-                           PlaylistRepository playlistRepository, TrackRepository trackRepository) {
+    public UserServiceImpl(UserRepository userRepository, PlaylistRepository playlistRepository,
+                           TrackRepository trackRepository) {
         this.userRepository = userRepository;
-        this.artistRepository = artistRepository;
         this.playlistRepository = playlistRepository;
         this.trackRepository = trackRepository;
     }
@@ -61,40 +58,57 @@ public class UserServiceImpl implements UserService {
         user.setName(userDto.getName());
         user.setEmail(userDto.getEmail());
         user.setPassword(userDto.getPassword());
-        List<Artist> likedArtists = artistRepository.findAllById(userDto.getLikedArtistsIds());
-        user.setLikedArtists(likedArtists);
-        List<Playlist> playlists = playlistRepository.findAllById(userDto.getPlaylistsIds());
-        user.setPlaylists(playlists);
-        List<Track> likedTracks = trackRepository.findAllById(userDto.getLikedTracksIds());
-        user.setLikedTracks(likedTracks);
         return userRepository.save(user);
     }
 
     @Override
     public User updateUser(long id, UserUpdateDto userDto) {
-        User genre = getUserById(id);
-        if (genre == null) {
+        User user = getUserById(id);
+        if (user == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
         if (userDto.getName() != null) {
-            genre.setName(userDto.getName());
+            user.setName(userDto.getName());
         }
         if (userDto.getEmail() != null) {
-            genre.setEmail(userDto.getEmail());
+            user.setEmail(userDto.getEmail());
         }
         if (userDto.getPassword() != null) {
-            genre.setPassword(userDto.getPassword());
+            user.setPassword(userDto.getPassword());
         }
-        if (userDto.getLikedArtistsIds() != null) {
-            genre.setLikedArtists(artistRepository.findAllById(userDto.getLikedArtistsIds()));
+        if (userDto.getCreatedPlaylistsIds() != null) {
+            user.setPlaylistsCreated(playlistRepository.findAllById(
+                    userDto.getCreatedPlaylistsIds()));
         }
-        if (userDto.getPlaylistsIds() != null) {
-            genre.setPlaylists(playlistRepository.findAllById(userDto.getPlaylistsIds()));
+        if (userDto.getSubscribedPlaylistsIds() != null) {
+            user.setPlaylistsSubscribed(playlistRepository.findAllById(
+                    userDto.getSubscribedPlaylistsIds()));
         }
-        if (userDto.getLikedTracksIds() != null) {
-            genre.setLikedTracks(trackRepository.findAllById(userDto.getLikedTracksIds()));
+        List<Playlist> playlists = new ArrayList<>();
+        if (userDto.getSubscribedPlaylistsIds() != null
+                && !userDto.getSubscribedPlaylistsIds().isEmpty()) {
+            for (Long playlistId : userDto.getSubscribedPlaylistsIds()) {
+                Playlist playlist = playlistRepository.findById(playlistId)
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                "Album not found"));
+                playlist.getSubscribers().add(user);
+                playlists.add(playlist);
+            }
+            user.setPlaylistsSubscribed(playlists);
         }
-        return userRepository.save(genre);
+        List<Track> tracks = new ArrayList<>();
+        if (userDto.getLikedTracksIds() != null
+                && !userDto.getLikedTracksIds().isEmpty()) {
+            for (Long trackId : userDto.getLikedTracksIds()) {
+                Track track = trackRepository.findById(trackId)
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                "Album not found"));
+                track.getLikedByUsers().add(user);
+                tracks.add(track);
+            }
+            user.setLikedTracks(tracks);
+        }
+        return userRepository.save(user);
     }
 
     @Override

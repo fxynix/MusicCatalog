@@ -2,25 +2,24 @@ package musiccatalog.dto.create;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import java.util.List;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class TrackCreateDto {
-    @NotBlank
+    @NotBlank(message = "Track's name can't be blank")
     private String name;
 
-    @Positive
+    @Positive(message = "Track's duration must be positive")
     private int duration;
 
-    @Positive
-    private int trackNumber;
-
-    @NotNull
+    @NotBlank(message = "Track can't be without album")
+    @Positive(message = "Track's album id must be positive")
     private Long albumId;
 
-    @NotEmpty
+    @NotEmpty(message = "Track must have genre(-s)")
     private List<Long> genresIds;
 }

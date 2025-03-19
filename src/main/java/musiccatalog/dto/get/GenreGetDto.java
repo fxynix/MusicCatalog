@@ -14,7 +14,9 @@ public class GenreGetDto {
     public GenreGetDto(Genre genre) {
         this.id = genre.getId();
         this.name = genre.getName();
-        this.tracksCount = genre.getTracks().size();
+        if (genre.getTracks() != null) {
+            this.tracksCount = genre.getTracks().size();
+        }
     }
 
 }

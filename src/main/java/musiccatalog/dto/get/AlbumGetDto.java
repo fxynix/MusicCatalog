@@ -21,9 +21,12 @@ public class AlbumGetDto {
         this.artists = album.getArtists().stream()
                 .map(Artist::getName)
                 .toList();
-        this.tracks = album.getTracks().stream()
-                .map(Track::getName)
-                .toList();
+        if (album.getTracks() != null) {
+            this.tracks = album.getTracks().stream()
+                    .map(Track::getName)
+                    .toList();
+        }
+
     }
 
 }

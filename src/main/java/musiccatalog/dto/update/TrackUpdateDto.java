@@ -2,10 +2,11 @@ package musiccatalog.dto.update;
 
 import jakarta.validation.constraints.Positive;
 import java.util.List;
-import lombok.Data;
-import musiccatalog.model.User;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class TrackUpdateDto {
 
     private String name;
@@ -14,9 +15,9 @@ public class TrackUpdateDto {
 
     private List<Long> genresIds;
 
-    private List<User> likedByUsers;
-    @Positive
-    private int trackNumber;
+    private List<Long> likedByUsers;
 
     private Long albumId;
+
+    private List<Long> playlistsIds;
 }

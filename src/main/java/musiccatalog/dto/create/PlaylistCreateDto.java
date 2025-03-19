@@ -1,17 +1,21 @@
 package musiccatalog.dto.create;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 import java.util.List;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class PlaylistCreateDto {
-    @NotBlank
+    @NotBlank(message = "Playlist's name can't be blank")
     private String name;
 
+    @Positive(message = "Playlist's track(-s) id(-s) must be positive")
     private List<Long> tracksIds;
-    @NotBlank
+
+    @NotBlank(message = "Playlist can't be without creator")
     private Long authorId;
 
-    private List<Long> subscribersIds;
 }

@@ -1,21 +1,19 @@
 package musiccatalog.dto.create;
 
 import jakarta.validation.constraints.NotBlank;
-import java.util.List;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class UserCreateDto {
-    @NotBlank
+    @NotBlank(message = "User's name can't be blank")
     private String name;
-    @NotBlank
+
+    @NotBlank(message = "User's email can't be blank")
     private String email;
-    @NotBlank
+
+    @NotBlank(message = "User's password can't be blank")
     private String password;
 
-    private List<Long> playlistsIds;
-
-    private List<Long> likedTracksIds;
-
-    private List<Long> likedArtistsIds;
 }

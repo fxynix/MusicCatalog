@@ -1,5 +1,6 @@
 package musiccatalog.controller;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import musiccatalog.dto.create.ArtistCreateDto;
 import musiccatalog.dto.get.ArtistGetDto;
@@ -11,14 +12,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+
 
 @RestController
 @RequestMapping("/artists")
@@ -57,14 +59,16 @@ public class ArtistController {
     }
 
     @PostMapping
-    public ResponseEntity<ArtistGetDto> createArtist(@RequestBody ArtistCreateDto artistDto) {
+    public ResponseEntity<ArtistGetDto> createArtist(@Valid @RequestBody
+                                                         ArtistCreateDto artistDto) {
         Artist newArtist = artistService.createArtist(artistDto);
         return new ResponseEntity<>(new ArtistGetDto(newArtist), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<ArtistGetDto> updateArtist(@PathVariable Long id,
-                                                     @RequestBody ArtistUpdateDto artistDto) {
+                                                     @Valid @RequestBody
+                                                     ArtistUpdateDto artistDto) {
         Artist updatedArtist = artistService.updateArtist(id, artistDto);
         return ResponseEntity.ok(new ArtistGetDto(updatedArtist));
     }

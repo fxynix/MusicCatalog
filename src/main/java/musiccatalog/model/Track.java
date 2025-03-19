@@ -1,5 +1,6 @@
 package musiccatalog.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -12,13 +13,11 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "tracks")
 public class Track {
@@ -32,13 +31,11 @@ public class Track {
     @Column(name = "duration")
     private int duration;
 
-    @Column(name = "number_in_album")
-    private int trackNumber;
-
     @ManyToMany(mappedBy = "likedTracks", fetch = FetchType.LAZY)
     private List<User> likedByUsers;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            fetch = FetchType.LAZY)
     @JoinTable(name = "track_genres",
             joinColumns = @JoinColumn(name = "track_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id"))
@@ -47,4 +44,7 @@ public class Track {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "album_id")
     private Album album;
+
+    @ManyToMany(mappedBy = "tracks", fetch = FetchType.LAZY)
+    private List<Playlist> playlists;
 }

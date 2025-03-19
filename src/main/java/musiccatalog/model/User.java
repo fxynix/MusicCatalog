@@ -3,6 +3,7 @@ package musiccatalog.model;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -12,16 +13,13 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "users")
-@AllArgsConstructor
-@NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,15 +34,8 @@ public class User {
     @Column(name = "email", unique = true, nullable = false)
     private String email;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_liked_artists",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "artist_id")
-    )
-    private List<Artist> likedArtists;
-
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_liked_tracks",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -53,5 +44,8 @@ public class User {
     private List<Track> likedTracks;
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Playlist> playlists;
+    private List<Playlist> playlistsCreated;
+
+    @ManyToMany(mappedBy = "subscribers", fetch = FetchType.LAZY)
+    private List<Playlist> playlistsSubscribed;
 }

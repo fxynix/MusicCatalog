@@ -18,10 +18,12 @@ public class UserGetDto {
     public UserGetDto(User user) {
         this.id = user.getId();
         this.name = user.getName();
-        this.playlists = user.getPlaylists().stream()
+        this.playlists = user.getPlaylistsCreated().stream()
                 .map(Playlist::getName)
                 .toList();
-        this.likedArtistsCount = user.getLikedArtists().size();
+        this.playlists = user.getPlaylistsSubscribed().stream()
+                .map(Playlist::getName)
+                .toList();
         this.likedTracksCount = user.getLikedTracks().size();
     }
 

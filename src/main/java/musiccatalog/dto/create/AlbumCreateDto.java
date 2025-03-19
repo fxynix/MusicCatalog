@@ -2,14 +2,14 @@ package musiccatalog.dto.create;
 
 import jakarta.validation.constraints.NotBlank;
 import java.util.List;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class AlbumCreateDto {
-    @NotBlank
+    @NotBlank(message = "Album's name can't be blank")
     private String name;
-    @NotBlank
+    @NotBlank(message =  "Album can't be without artist(-s)")
     private List<Long> artistsIds;
-
-    private List<Long> tracksIds;
 }

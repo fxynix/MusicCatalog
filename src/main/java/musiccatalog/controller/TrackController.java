@@ -1,5 +1,6 @@
 package musiccatalog.controller;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import musiccatalog.dto.create.TrackCreateDto;
 import musiccatalog.dto.get.TrackGetDto;
@@ -11,9 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -59,14 +60,14 @@ public class TrackController {
     }
 
     @PostMapping
-    public ResponseEntity<TrackGetDto> createTrack(@RequestBody TrackCreateDto trackDto) {
+    public ResponseEntity<TrackGetDto> createTrack(@Valid @RequestBody TrackCreateDto trackDto) {
         Track newTrack = trackService.createTrack(trackDto);
         return new ResponseEntity<>(new TrackGetDto(newTrack), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<TrackGetDto> updateTrack(@PathVariable Long id,
-                                                   @RequestBody TrackUpdateDto trackDto) {
+                                                   @Valid @RequestBody TrackUpdateDto trackDto) {
         Track updatedTrack = trackService.updateTrack(id, trackDto);
         return ResponseEntity.ok(new TrackGetDto(updatedTrack));
     }

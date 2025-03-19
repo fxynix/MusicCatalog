@@ -1,11 +1,11 @@
 package musiccatalog.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import musiccatalog.dto.create.AlbumCreateDto;
 import musiccatalog.dto.update.AlbumUpdateDto;
 import musiccatalog.model.Album;
 import musiccatalog.model.Artist;
-import musiccatalog.model.Track;
 import musiccatalog.repository.AlbumRepository;
 import musiccatalog.repository.ArtistRepository;
 import musiccatalog.repository.TrackRepository;
@@ -56,8 +56,6 @@ public class AlbumServiceImpl implements AlbumService {
         album.setName(albumDto.getName());
         List<Artist> artists = artistRepository.findAllById(albumDto.getArtistsIds());
         album.setArtists(artists);
-        List<Track> tracks = trackRepository.findAllById(albumDto.getTracksIds());
-        album.setTracks(tracks);
         return albumRepository.save(album);
     }
 
@@ -75,6 +73,17 @@ public class AlbumServiceImpl implements AlbumService {
         }
         if (albumDto.getName() != null) {
             album.setName(albumDto.getName());
+        }
+        List<Artist> artists = new ArrayList<>();
+        if (albumDto.getArtistsIds() != null && !albumDto.getArtistsIds().isEmpty()) {
+            for (Long artistId : albumDto.getArtistsIds()) {
+                Artist artist = artistRepository.findById(artistId)
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                "Artist not found"));
+                artist.getAlbums().add(album);
+                artists.add(artist);
+            }
+            album.setArtists(artists);
         }
         return albumRepository.save(album);
     }

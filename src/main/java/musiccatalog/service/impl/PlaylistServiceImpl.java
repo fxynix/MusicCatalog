@@ -1,5 +1,6 @@
 package musiccatalog.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import musiccatalog.dto.create.PlaylistCreateDto;
 import musiccatalog.dto.update.PlaylistUpdateDto;
@@ -60,8 +61,6 @@ public class PlaylistServiceImpl implements PlaylistService {
                 .orElseThrow(()
                         -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Artist not found"));
         playlist.setAuthor(author);
-        List<User> subscribers = userRepository.findAllById(playlistDto.getSubscribersIds());
-        playlist.setSubscribers(subscribers);
         return playlistRepository.save(playlist);
     }
 
@@ -71,8 +70,16 @@ public class PlaylistServiceImpl implements PlaylistService {
         if (playlist == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Playlist not found");
         }
-        if (playlistDto.getTracksIds() != null) {
-            playlist.setTracks(trackRepository.findAllById(playlistDto.getTracksIds()));
+        List<Track> tracks = new ArrayList<>();
+        if (playlistDto.getTracksIds() != null && !playlistDto.getTracksIds().isEmpty()) {
+            for (Long trackId : playlistDto.getTracksIds()) {
+                Track track = trackRepository.findById(trackId)
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                "Track not found"));
+                track.getPlaylists().add(playlist);
+                tracks.add(track);
+            }
+            playlist.setTracks(tracks);
         }
         if (playlistDto.getName() != null) {
             playlist.setName(playlistDto.getName());
@@ -80,10 +87,17 @@ public class PlaylistServiceImpl implements PlaylistService {
         if (playlistDto.getAuthorId() != null) {
             playlist.setAuthor(userRepository.findById(playlistDto.getAuthorId())
                 .orElseThrow(()
-                    -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Artist not found")));
+                    -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Author not found")));
+
         }
+        List<User> subscribers;
         if (playlistDto.getSubscribersIds() != null) {
-            playlist.setSubscribers(userRepository.findAllById(playlistDto.getSubscribersIds()));
+            subscribers = playlistDto.getSubscribersIds().stream().map(userId ->
+                    userRepository.findById(userId)
+                            .orElseThrow(() ->
+                                    new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                            "Track not found"))).toList();
+            playlist.setSubscribers(subscribers);
         }
         return playlistRepository.save(playlist);
     }

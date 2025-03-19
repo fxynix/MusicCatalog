@@ -1,13 +1,16 @@
 package musiccatalog.dto.update;
 
+import jakarta.validation.constraints.Positive;
 import java.util.List;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class ArtistUpdateDto {
+
     private String name;
 
+    @Positive(message = "Artist's album(-s) id(-s) must be positive")
     private List<Long> albumsIds;
-
-    private List<Long> likedByUsersIds;
 }

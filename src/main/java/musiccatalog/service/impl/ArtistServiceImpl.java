@@ -5,30 +5,24 @@ import musiccatalog.dto.create.ArtistCreateDto;
 import musiccatalog.dto.update.ArtistUpdateDto;
 import musiccatalog.model.Album;
 import musiccatalog.model.Artist;
-import musiccatalog.model.User;
 import musiccatalog.repository.AlbumRepository;
 import musiccatalog.repository.ArtistRepository;
-import musiccatalog.repository.UserRepository;
 import musiccatalog.service.ArtistService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-
 @Service
 public class ArtistServiceImpl implements ArtistService {
 
     private final ArtistRepository artistRepository;
     private final AlbumRepository albumRepository;
-    private final UserRepository userRepository;
 
     @Autowired
-    public ArtistServiceImpl(ArtistRepository artistRepository, AlbumRepository albumRepository,
-            UserRepository userRepository) {
+    public ArtistServiceImpl(ArtistRepository artistRepository, AlbumRepository albumRepository) {
         this.artistRepository = artistRepository;
         this.albumRepository = albumRepository;
-        this.userRepository = userRepository;
     }
 
     @Override
@@ -58,8 +52,6 @@ public class ArtistServiceImpl implements ArtistService {
         artist.setName(artistDto.getName());
         List<Album> albums = albumRepository.findAllById(artistDto.getAlbumsIds());
         artist.setAlbums(albums);
-        List<User> users = userRepository.findAllById(artistDto.getLikedByUsersIds());
-        artist.setLikedByUsers(users);
         return artistRepository.save(artist);
     }
 
@@ -75,10 +67,17 @@ public class ArtistServiceImpl implements ArtistService {
         if (artistDto.getName() != null) {
             artist.setName(artistDto.getName());
         }
-        if (artistDto.getLikedByUsersIds() != null) {
-            artist.setLikedByUsers(userRepository.findAllById(artistDto.getLikedByUsersIds()));
+        List<Album> albums;
+        if (artistDto.getAlbumsIds() != null) {
+            albums = artistDto.getAlbumsIds().stream().map(albumId ->
+                    albumRepository.findById(albumId)
+                        .orElseThrow(() ->
+                                new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                     "Artist not found"))).toList();
+            artist.setAlbums(albums);
         }
         return artistRepository.save(artist);
+
     }
 
     @Override

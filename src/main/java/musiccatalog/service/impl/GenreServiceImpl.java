@@ -49,10 +49,11 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     public Genre createGenre(GenreCreateDto genreDto) {
+        if (genreRepository.findByName(genreDto.getName()) != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Genre name already exists");
+        }
         Genre genre = new Genre();
         genre.setName(genreDto.getName());
-        List<Track> tracks = trackRepository.findAllById(genreDto.getTracksIds());
-        genre.setTracks(tracks);
         return genreRepository.save(genre);
     }
 
@@ -67,6 +68,15 @@ public class GenreServiceImpl implements GenreService {
         }
         if (genreDto.getName() != null) {
             genre.setName(genreDto.getName());
+        }
+        List<Track> tracks;
+        if (genreDto.getTracksIds() != null) {
+            tracks = genreDto.getTracksIds().stream().map(trackId ->
+                    trackRepository.findById(trackId)
+                            .orElseThrow(() ->
+                                    new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                            "Track not found"))).toList();
+            genre.setTracks(tracks);
         }
         return genreRepository.save(genre);
     }

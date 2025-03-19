@@ -1,5 +1,6 @@
 package musiccatalog.controller;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import musiccatalog.dto.create.GenreCreateDto;
 import musiccatalog.dto.get.GenreGetDto;
@@ -11,9 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -57,14 +58,14 @@ public class GenreController {
     }
 
     @PostMapping
-    public ResponseEntity<GenreGetDto> createGenre(@RequestBody GenreCreateDto genreDto) {
+    public ResponseEntity<GenreGetDto> createGenre(@Valid @RequestBody GenreCreateDto genreDto) {
         Genre newGenre = genreService.createGenre(genreDto);
         return new ResponseEntity<>(new GenreGetDto(newGenre), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<GenreGetDto> updateGenre(@PathVariable Long id,
-                                                     @RequestBody GenreUpdateDto genreDto) {
+                                                   @Valid @RequestBody GenreUpdateDto genreDto) {
         Genre updatedGenre = genreService.updateGenre(id, genreDto);
         return ResponseEntity.ok(new GenreGetDto(updatedGenre));
     }

@@ -9,14 +9,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @Table(name = "artists")
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
 public class Artist {
     @Id
@@ -26,13 +24,7 @@ public class Artist {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @ManyToMany(mappedBy = "artists")
+    @ManyToMany(mappedBy = "artists", fetch = FetchType.LAZY)
     private List<Album> albums;
 
-    @ManyToMany(mappedBy = "likedArtists", fetch = FetchType.LAZY)
-    private List<User> likedByUsers;
-
 }
-
-
-

@@ -1,5 +1,6 @@
 package musiccatalog.controller;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import musiccatalog.dto.create.AlbumCreateDto;
 import musiccatalog.dto.get.AlbumGetDto;
@@ -11,9 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -59,14 +60,14 @@ public class AlbumController {
     }
 
     @PostMapping
-    public ResponseEntity<AlbumGetDto> createAlbum(@RequestBody AlbumCreateDto albumDto) {
+    public ResponseEntity<AlbumGetDto> createAlbum(@Valid @RequestBody AlbumCreateDto albumDto) {
         Album newAlbum = albumService.createAlbum(albumDto);
         return new ResponseEntity<>(new AlbumGetDto(newAlbum), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<AlbumGetDto> updateAlbum(@PathVariable Long id,
-                                                   @RequestBody AlbumUpdateDto albumDto) {
+                                                   @Valid @RequestBody AlbumUpdateDto albumDto) {
         Album updatedAlbum = albumService.updateAlbum(id, albumDto);
         return ResponseEntity.ok(new AlbumGetDto(updatedAlbum));
     }
