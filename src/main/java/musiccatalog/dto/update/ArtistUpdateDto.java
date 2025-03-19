@@ -11,6 +11,5 @@ public class ArtistUpdateDto {
 
     private String name;
 
-    @Positive(message = "Artist's album(-s) id(-s) must be positive")
-    private List<Long> albumsIds;
+    private List<@Positive(message = "Artist's album(-s) id(-s) must be positive") Long> albumsIds;
 }

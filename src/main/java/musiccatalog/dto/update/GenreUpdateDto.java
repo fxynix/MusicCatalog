@@ -11,6 +11,5 @@ public class GenreUpdateDto {
 
     private String name;
 
-    @Positive(message = "Genre's track(-s) id(-s) must be positive")
-    private List<Long> tracksIds;
+    private List<@Positive(message = "Genre's track(-s) id(-s) must be positive") Long> tracksIds;
 }

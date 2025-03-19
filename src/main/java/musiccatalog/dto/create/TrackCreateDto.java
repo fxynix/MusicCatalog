@@ -16,7 +16,6 @@ public class TrackCreateDto {
     @Positive(message = "Track's duration must be positive")
     private int duration;
 
-    @NotBlank(message = "Track can't be without album")
     @Positive(message = "Track's album id must be positive")
     private Long albumId;
 
