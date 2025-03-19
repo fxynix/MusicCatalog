@@ -21,5 +21,5 @@ public class TrackCreateDto {
     private Long albumId;
 
     @NotEmpty(message = "Track must have genre(-s)")
-    private List<Long> genresIds;
+    private List<@Positive Long> genresIds;
 }

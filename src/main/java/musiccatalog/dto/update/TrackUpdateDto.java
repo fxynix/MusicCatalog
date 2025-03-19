@@ -13,11 +13,12 @@ public class TrackUpdateDto {
     @Positive
     private int duration;
 
-    private List<Long> genresIds;
+    private List<@Positive Long> genresIds;
 
-    private List<Long> likedByUsers;
+    private List<@Positive Long> likedByUsers;
 
+    @Positive
     private Long albumId;
 
-    private List<Long> playlistsIds;
+    private List<@Positive Long> playlistsIds;
 }

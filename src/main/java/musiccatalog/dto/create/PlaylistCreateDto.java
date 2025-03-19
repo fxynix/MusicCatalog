@@ -12,8 +12,8 @@ public class PlaylistCreateDto {
     @NotBlank(message = "Playlist's name can't be blank")
     private String name;
 
-    @Positive(message = "Playlist's track(-s) id(-s) must be positive")
-    private List<Long> tracksIds;
+    private List<@Positive(message = "Playlist's track(-s) id(-s) must be positive") Long>
+            tracksIds;
 
     @NotBlank(message = "Playlist can't be without creator")
     private Long authorId;

@@ -15,12 +15,13 @@ public class UserUpdateDto {
 
     private String password;
 
-    @Positive(message = "User's subscribed playlist(-s) id(-s) must be positive")
-    private List<Long> subscribedPlaylistsIds;
+    private List<@Positive(message = "User's subscribed playlist(-s) id(-s) must be positive") Long>
+        subscribedPlaylistsIds;
 
-    @Positive(message = "User's created playlist(-s) id(-s) must be positive")
-    private List<Long> createdPlaylistsIds;
+    private List<@Positive(message = "User's created playlist(-s) id(-s) must be positive") Long>
+            createdPlaylistsIds;
 
-    @Positive(message = "User's liked track(-s) id(-s) must be positive")
-    private List<Long> likedTracksIds;
+
+    private List<@Positive(message = "User's liked track(-s) id(-s) must be positive")Long>
+            likedTracksIds;
 }
