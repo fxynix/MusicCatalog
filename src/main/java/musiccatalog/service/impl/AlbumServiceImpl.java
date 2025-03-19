@@ -54,8 +54,10 @@ public class AlbumServiceImpl implements AlbumService {
     public Album createAlbum(AlbumCreateDto albumDto) {
         Album album = new Album();
         album.setName(albumDto.getName());
-        List<Artist> artists = artistRepository.findAllById(albumDto.getArtistsIds());
-        album.setArtists(artists);
+        if (albumDto.getArtistsIds() != null) {
+            List<Artist> artists = artistRepository.findAllById(albumDto.getArtistsIds());
+            album.setArtists(artists);
+        }
         return albumRepository.save(album);
     }
 

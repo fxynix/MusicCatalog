@@ -50,8 +50,10 @@ public class ArtistServiceImpl implements ArtistService {
     public Artist createArtist(ArtistCreateDto artistDto) {
         Artist artist = new Artist();
         artist.setName(artistDto.getName());
-        List<Album> albums = albumRepository.findAllById(artistDto.getAlbumsIds());
-        artist.setAlbums(albums);
+        if (artistDto.getAlbumsIds() != null) {
+            List<Album> albums = albumRepository.findAllById(artistDto.getAlbumsIds());
+            artist.setAlbums(albums);
+        }
         return artistRepository.save(artist);
     }
 
