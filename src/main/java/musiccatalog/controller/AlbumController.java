@@ -59,6 +59,17 @@ public class AlbumController {
                 .toList());
     }
 
+    @GetMapping("/filter")
+    public ResponseEntity<List<AlbumGetDto>> getAlbumByGenreName(@RequestParam String genreName) {
+        List<Album> albums = albumService.getAlbumsByGenreName(genreName);
+        if (albums.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No album found");
+        }
+        return ResponseEntity.ok(albums.stream()
+                .map(AlbumGetDto::new)
+                .toList());
+    }
+
     @PostMapping
     public ResponseEntity<AlbumGetDto> createAlbum(@Valid @RequestBody AlbumCreateDto albumDto) {
         Album newAlbum = albumService.createAlbum(albumDto);

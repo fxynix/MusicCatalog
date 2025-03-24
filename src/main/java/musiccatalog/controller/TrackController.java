@@ -59,6 +59,18 @@ public class TrackController {
                 .toList());
     }
 
+    @GetMapping("/filter")
+    public ResponseEntity<List<TrackGetDto>> getTracksByArtistName(
+            @RequestParam String artistName) {
+        List<Track> tracks = trackService.getTracksByArtistName(artistName);
+        if (tracks.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No track found");
+        }
+        return ResponseEntity.ok(tracks.stream()
+                .map(TrackGetDto::new)
+                .toList());
+    }
+
     @PostMapping
     public ResponseEntity<TrackGetDto> createTrack(@Valid @RequestBody TrackCreateDto trackDto) {
         Track newTrack = trackService.createTrack(trackDto);
