@@ -11,7 +11,9 @@ public class AlbumUpdateDto {
 
     private String name;
 
-    private List<@Positive(message = "Album's artist(-s) id(-s) must be positive") Long> artistsIds;
+    private List<@Positive(message =
+            "ID исполнителей альбома должны быть положительными") Long> artistsIds;
 
-    private List<@Positive(message = "Album's track(-s) id(-s) must be positive") Long> tracksIds;
+    private List<@Positive(message =
+            "ID треков альбома должны быть положительными") Long> tracksIds;
 }

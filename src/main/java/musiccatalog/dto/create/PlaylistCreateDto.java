@@ -10,13 +10,15 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PlaylistCreateDto {
-    @NotBlank(message = "Playlist's name can't be blank")
+
+    @NotBlank(message = "Имя создаваемого плейлиста не может быть пустым")
     private String name;
 
-    private List<@Positive(message = "Playlist's track(-s) id(-s) must be positive") Long>
-            tracksIds;
+    private List<@Positive(message =
+            "ID треков должно быть положительными") Long> tracksIds;
 
-    @NotNull(message = "Playlist can't be without creator")
+    @NotNull(message = "Создаваемый плейлист не может не иметь автора")
+    @Positive(message = "ID автора должно быть положительным")
     private Long authorId;
 
 }

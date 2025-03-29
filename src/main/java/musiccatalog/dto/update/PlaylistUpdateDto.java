@@ -11,12 +11,10 @@ public class PlaylistUpdateDto {
 
     private String name;
 
-    @Positive(message = "Playlist's track(-s) id(-s) must be positive")
-    private List<Long> tracksIds;
+    private List<@Positive(message =
+            "ID треков плейлиста должы быть положительными") Long> tracksIds;
 
-    @Positive(message = "Playlist's author id must be positive")
+    @Positive(message = "ID автора плейлиста должно быть положительным")
     private Long authorId;
 
-    @Positive(message = "Playlist's subscriber(-s) id(-s) must be positive")
-    private List<Long> subscribersIds;
 }

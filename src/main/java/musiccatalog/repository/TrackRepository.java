@@ -10,17 +10,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TrackRepository extends JpaRepository<Track, Long> {
 
-    @Query(value = """
-    SELECT t.*\s
-    FROM tracks t
-    INNER JOIN albums a ON t.album_id = a.id
-    INNER JOIN album_artists aa ON a.id = aa.album_id
-    INNER JOIN artists art ON aa.artist_id = art.id
-    WHERE art.name = :artistName
-       \s""", nativeQuery = true)
+    @Query("SELECT t FROM Track t "
+            + "JOIN t.album a "
+            + "JOIN a.artists art "
+            + "WHERE art.name = :artistName")
     List<Track> findTracksByArtistName(@Param("artistName") String artistName);
 
     List<Track> findTracksByName(String name);
-
-    Track findTrackById(long id);
 }

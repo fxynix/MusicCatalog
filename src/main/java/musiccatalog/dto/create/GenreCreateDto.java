@@ -7,7 +7,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GenreCreateDto {
-    @NotBlank(message = "Genre's name can't be blank")
+
+    @NotBlank(message = "Имя создаваемого жанра не может быть пустым")
     private String name;
 
 }

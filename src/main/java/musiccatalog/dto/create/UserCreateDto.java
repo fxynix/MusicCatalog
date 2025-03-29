@@ -7,13 +7,13 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserCreateDto {
-    @NotBlank(message = "User's name can't be blank")
+
+    @NotBlank(message = "Имя создаваемого пользователя не может быть пустым")
     private String name;
 
-    @NotBlank(message = "User's email can't be blank")
+    @NotBlank(message = "Почта создаваемого пользователя не может быть пустым")
     private String email;
 
-    @NotBlank(message = "User's password can't be blank")
+    @NotBlank(message = "Пароль создаваемого пользователя не может быть пустым")
     private String password;
-
 }

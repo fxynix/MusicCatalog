@@ -11,21 +11,30 @@ import musiccatalog.model.User;
 public class UserGetDto {
     private Long id;
     private String name;
+    private String email;
     private List<String> playlistsCreated;
     private List<String> playlistsLiked;
-    private int likedArtistsCount;
     private int likedTracksCount;
 
     public UserGetDto(User user) {
         this.id = user.getId();
         this.name = user.getName();
-        this.playlistsCreated = user.getPlaylistsCreated().stream()
-                .map(Playlist::getName)
-                .toList();
-        this.playlistsLiked = user.getPlaylistsSubscribed().stream()
-                .map(Playlist::getName)
-                .toList();
-        this.likedTracksCount = user.getLikedTracks().size();
+        this.email = user.getEmail();
+        if (user.getPlaylistsCreated() != null) {
+            this.playlistsCreated = user.getPlaylistsCreated().stream()
+                    .map(Playlist::getName)
+                    .toList();
+        }
+        if (user.getPlaylistsSubscribed() != null) {
+            this.playlistsLiked = user.getPlaylistsSubscribed().stream()
+                    .map(Playlist::getName)
+                    .toList();
+        }
+        if (user.getLikedTracks() == null) {
+            this.likedTracksCount = 0;
+        } else {
+            this.likedTracksCount = user.getLikedTracks().size();
+        }
     }
 
 }

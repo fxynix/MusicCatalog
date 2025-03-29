@@ -11,13 +11,13 @@ public class TrackUpdateDto {
 
     private String name;
 
+    @Positive(message = "Длительность трека должна быть положительной")
     private int duration;
 
-    private List<@Positive Long> genresIds;
+    private List<@Positive(message =
+            "ID жанров, к которым отнисится трек, должны быть положительными") Long> genresIds;
 
-    private List<@Positive Long> likedByUsers;
-
+    @Positive(message = "ID альбома, к которому отнисится трек, должен быть положительным")
     private Long albumId;
 
-    private List<@Positive Long> playlistsIds;
 }

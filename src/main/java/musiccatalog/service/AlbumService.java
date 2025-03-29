@@ -2,17 +2,17 @@ package musiccatalog.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import musiccatalog.dto.create.AlbumCreateDto;
 import musiccatalog.dto.update.AlbumUpdateDto;
+import musiccatalog.exception.NotFoundException;
 import musiccatalog.model.Album;
 import musiccatalog.model.Artist;
 import musiccatalog.repository.AlbumRepository;
 import musiccatalog.repository.ArtistRepository;
 import musiccatalog.repository.TrackRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class AlbumService {
@@ -32,23 +32,24 @@ public class AlbumService {
     }
 
     public List<Album> getAllAlbums() {
-        List<Album> albums = albumRepository.findAll();
         String cacheKey = "albums_all";
         if (cache.containsKey(cacheKey)) {
             return (List<Album>) cache.get(cacheKey);
         }
+        List<Album> albums = albumRepository.findAll();
         cache.put(cacheKey, albums);
         return albums;
     }
 
-    public Album getAlbumById(long id) {
-        Album album = albumRepository.findAlbumById(id);
+    public Optional<Album> getAlbumById(long id) {
         String cacheKey = "albums_id_" + id;
         if (cache.containsKey(cacheKey)) {
-            return (Album) cache.get(cacheKey);
+            return Optional.of((Album) cache.get(cacheKey));
         }
+        Album album = albumRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Не найден альбом с ID = " + id));
         cache.put(cacheKey, album);
-        return album;
+        return Optional.of(album);
     }
 
     public List<Album> getAlbumByName(String name)  {
@@ -68,7 +69,7 @@ public class AlbumService {
         }
         List<Album> albums = albumRepository.findAlbumsByGenreName(genreName);
         if (albums.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            throw new NotFoundException("Подхлдящих альбомов не найдено");
         }
         cache.put(cacheKey, albums);
         return albums;
@@ -86,10 +87,8 @@ public class AlbumService {
     }
 
     public Album updateAlbum(long id, AlbumUpdateDto albumDto) {
-        Album album = getAlbumById(id);
-        if (album == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Album not found");
-        }
+        Album album = albumRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Не найден альбом с ID = " + id));
         if (albumDto.getArtistsIds() != null) {
             album.setArtists(artistRepository.findAllById(albumDto.getArtistsIds()));
         }
@@ -103,8 +102,8 @@ public class AlbumService {
         if (albumDto.getArtistsIds() != null && !albumDto.getArtistsIds().isEmpty()) {
             for (Long artistId : albumDto.getArtistsIds()) {
                 Artist artist = artistRepository.findById(artistId)
-                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                "Artist not found"));
+                        .orElseThrow(() -> new NotFoundException(
+                                "Указанный исполнитель альбома не найден"));
                 artist.getAlbums().add(album);
                 artists.add(artist);
             }
@@ -116,8 +115,8 @@ public class AlbumService {
 
     public void deleteAlbum(Long id) {
         Album album = albumRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Album was not found"));
+                .orElseThrow(() -> new NotFoundException(
+                        "Не найдено альбома с ID = " + id));
         albumRepository.delete(album);
         cache.clear();
     }

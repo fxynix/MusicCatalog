@@ -2,8 +2,10 @@ package musiccatalog.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import musiccatalog.dto.create.PlaylistCreateDto;
 import musiccatalog.dto.update.PlaylistUpdateDto;
+import musiccatalog.exception.NotFoundException;
 import musiccatalog.model.Playlist;
 import musiccatalog.model.Track;
 import musiccatalog.model.User;
@@ -11,9 +13,7 @@ import musiccatalog.repository.PlaylistRepository;
 import musiccatalog.repository.TrackRepository;
 import musiccatalog.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class PlaylistService {
@@ -34,31 +34,32 @@ public class PlaylistService {
     }
 
     public List<Playlist> getAllPlaylists() {
-        List<Playlist> playlists = playlistRepository.findAll();
         String cacheKey = "playlists_all";
         if (cache.containsKey(cacheKey)) {
             return (List<Playlist>) cache.get(cacheKey);
         }
+        List<Playlist> playlists = playlistRepository.findAll();
         cache.put(cacheKey, playlists);
         return playlists;
     }
 
-    public Playlist getPlaylistById(long id) {
-        Playlist playlist = playlistRepository.findPlaylistById(id);
+    public Optional<Playlist> getPlaylistById(long id) {
         String cacheKey = "playlists_id_" + id;
         if (cache.containsKey(cacheKey)) {
-            return (Playlist) cache.get(cacheKey);
+            return (Optional<Playlist>) cache.get(cacheKey);
         }
+        Playlist playlist = playlistRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Не найдено плейлиста с ID " + id));
         cache.put(cacheKey, playlist);
-        return playlist;
+        return Optional.of(playlist);
     }
 
     public List<Playlist> getPlaylistByName(String name)  {
-        List<Playlist> playlist = playlistRepository.findPlaylistByName(name);
         String cacheKey = "playlists_name_" + name;
         if (cache.containsKey(cacheKey)) {
             return (List<Playlist>) cache.get(cacheKey);
         }
+        List<Playlist> playlist = playlistRepository.findPlaylistByName(name);
         cache.put(cacheKey, playlist);
         return playlist;
     }
@@ -70,23 +71,20 @@ public class PlaylistService {
         playlist.setTracks(tracks);
         User author = userRepository.findById(playlistDto.getAuthorId())
                 .orElseThrow(()
-                        -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Artist not found"));
+                        -> new NotFoundException("Создатель плейлиста не найден"));
         playlist.setAuthor(author);
         cache.clear();
         return playlistRepository.save(playlist);
     }
 
     public Playlist updatePlaylist(long id, PlaylistUpdateDto playlistDto) {
-        Playlist playlist = getPlaylistById(id);
-        if (playlist == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Playlist not found");
-        }
+        Playlist playlist = getPlaylistById(id)
+                .orElseThrow(() -> new NotFoundException("Не найдено плейлиста с ID " + id));
         List<Track> tracks = new ArrayList<>();
         if (playlistDto.getTracksIds() != null && !playlistDto.getTracksIds().isEmpty()) {
             for (Long trackId : playlistDto.getTracksIds()) {
                 Track track = trackRepository.findById(trackId)
-                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                "Track not found"));
+                        .orElseThrow(() -> new NotFoundException("Трек в плейлисте не найден"));
                 track.getPlaylists().add(playlist);
                 tracks.add(track);
             }
@@ -98,17 +96,8 @@ public class PlaylistService {
         if (playlistDto.getAuthorId() != null) {
             playlist.setAuthor(userRepository.findById(playlistDto.getAuthorId())
                 .orElseThrow(()
-                    -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Author not found")));
+                    -> new NotFoundException("Создатель плейлиста не найден")));
 
-        }
-        List<User> subscribers;
-        if (playlistDto.getSubscribersIds() != null) {
-            subscribers = playlistDto.getSubscribersIds().stream().map(userId ->
-                    userRepository.findById(userId)
-                            .orElseThrow(() ->
-                                    new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                            "Track not found"))).toList();
-            playlist.setSubscribers(subscribers);
         }
         cache.clear();
         return playlistRepository.save(playlist);
@@ -116,9 +105,7 @@ public class PlaylistService {
 
     public void deletePlaylist(Long id) {
         Playlist playlist = playlistRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                "Playlist was not found"));
+                .orElseThrow(() -> new NotFoundException("Не найден плейлист с ID = " + id));
         playlistRepository.delete(playlist);
         cache.clear();
     }

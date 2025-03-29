@@ -10,15 +10,16 @@ import lombok.Setter;
 @Getter
 @Setter
 public class TrackCreateDto {
-    @NotBlank(message = "Track's name can't be blank")
+
+    @NotBlank(message = "Имя создаваемого трека не может быть пустым")
     private String name;
 
-    @Positive(message = "Track's duration must be positive")
+    @Positive(message = "Длительность трека должна быть положительной")
     private int duration;
 
-    @Positive(message = "Track's album id must be positive")
+    @Positive(message = "ID альбома должен быть положительным")
     private Long albumId;
 
-    @NotEmpty(message = "Track must have genre(-s)")
-    private List<@Positive Long> genresIds;
+    @NotEmpty(message = "Трек должен иметь хоть 1 жанр")
+    private List<@Positive(message = "ID жанра должно быть положительным") Long> genresIds;
 }

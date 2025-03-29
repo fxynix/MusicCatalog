@@ -16,12 +16,17 @@ public class InMemoryCache {
             cache.remove(oldestKey);
         }
         cache.put(key, value);
+
         Logger logger = Logger.getLogger(InMemoryCache.class.getName());
-        String msg = String.format("Cached size: %s", cache.size());
+        String msg = String.format("Новый запрос сохранён в кэше. Текущий размер кэша: %s",
+                cache.size());
         logger.info(msg);
     }
 
     public Object get(String key) {
+        Logger logger = Logger.getLogger(InMemoryCache.class.getName());
+        String msg = "Вызов запроса из кэша с ключём: " + key;
+        logger.info(msg);
         return cache.get(key);
     }
 
@@ -29,12 +34,11 @@ public class InMemoryCache {
         return cache.containsKey(key);
     }
 
-    public void remove(String key) {
-        cache.remove(key);
-    }
-
     public void clear() {
         cache.clear();
+        Logger logger = Logger.getLogger(InMemoryCache.class.getName());
+        String msg = String.format("Кэш очищен. Текущий размер кэша: %s", cache.size());
+        logger.info(msg);
     }
 }
 

@@ -2,8 +2,11 @@ package musiccatalog.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import musiccatalog.dto.create.UserCreateDto;
 import musiccatalog.dto.update.UserUpdateDto;
+import musiccatalog.exception.ConflictException;
+import musiccatalog.exception.NotFoundException;
 import musiccatalog.model.Playlist;
 import musiccatalog.model.Track;
 import musiccatalog.model.User;
@@ -11,9 +14,7 @@ import musiccatalog.repository.PlaylistRepository;
 import musiccatalog.repository.TrackRepository;
 import musiccatalog.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class UserService {
@@ -33,38 +34,39 @@ public class UserService {
     }
 
     public List<User> getAllUsers() {
-        List<User> users = userRepository.findAll();
         String cacheKey = "users_all";
         if (cache.containsKey(cacheKey)) {
             return (List<User>) cache.get(cacheKey);
         }
+        List<User> users = userRepository.findAll();
         cache.put(cacheKey, users);
         return users;
     }
 
-    public User getUserById(long id) {
-        User user = userRepository.findUserById(id);
+    public Optional<User> getUserById(long id) {
         String cacheKey = "users_id_" + id;
         if (cache.containsKey(cacheKey)) {
-            return (User) cache.get(cacheKey);
+            return (Optional<User>) cache.get(cacheKey);
         }
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Не найден пользователь с ID = " + id));
         cache.put(cacheKey, user);
-        return user;
+        return Optional.of(user);
     }
 
     public User getUserByName(String name)  {
-        User user = userRepository.findUserByName(name);
         String cacheKey = "users_name_" + name;
         if (cache.containsKey(cacheKey)) {
             return (User) cache.get(cacheKey);
         }
+        User user = userRepository.findUserByName(name);
         cache.put(cacheKey, user);
         return user;
     }
 
     public User createUser(UserCreateDto userDto) {
         if (userRepository.findUserByEmail(userDto.getEmail()) != null) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email name already exists");
+            throw new ConflictException("Указанный Email уже занят");
         }
         User user = new User();
         user.setName(userDto.getName());
@@ -75,12 +77,11 @@ public class UserService {
     }
 
     public User updateUser(long id, UserUpdateDto userDto) {
-        User user = getUserById(id);
-        if (userRepository.findUserByEmail(userDto.getEmail()) != null) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email name already exists");
-        }
-        if (user == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        User user = getUserById(id)
+                .orElseThrow(() -> new NotFoundException("Не найдено пользователя с ID = " + id));
+        if (userRepository.findUserByEmail(userDto.getEmail()) != null
+                && userRepository.findUserByEmail(userDto.getEmail()).getId() != id) {
+            throw new ConflictException("Указанный Email уже занят");
         }
         if (userDto.getName() != null) {
             user.setName(userDto.getName());
@@ -91,10 +92,7 @@ public class UserService {
         if (userDto.getPassword() != null) {
             user.setPassword(userDto.getPassword());
         }
-        if (userDto.getCreatedPlaylistsIds() != null) {
-            user.setPlaylistsCreated(playlistRepository.findAllById(
-                    userDto.getCreatedPlaylistsIds()));
-        }
+
         if (userDto.getSubscribedPlaylistsIds() != null) {
             user.setPlaylistsSubscribed(playlistRepository.findAllById(
                     userDto.getSubscribedPlaylistsIds()));
@@ -104,8 +102,7 @@ public class UserService {
                 && !userDto.getSubscribedPlaylistsIds().isEmpty()) {
             for (Long playlistId : userDto.getSubscribedPlaylistsIds()) {
                 Playlist playlist = playlistRepository.findById(playlistId)
-                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                "Album not found"));
+                        .orElseThrow(() -> new NotFoundException("Плейлист не найден"));
                 playlist.getSubscribers().add(user);
                 playlists.add(playlist);
             }
@@ -116,8 +113,7 @@ public class UserService {
                 && !userDto.getLikedTracksIds().isEmpty()) {
             for (Long trackId : userDto.getLikedTracksIds()) {
                 Track track = trackRepository.findById(trackId)
-                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                "Album not found"));
+                        .orElseThrow(() -> new NotFoundException(""));
                 track.getLikedByUsers().add(user);
                 tracks.add(track);
             }
@@ -129,9 +125,7 @@ public class UserService {
 
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                "User was not found"));
+                .orElseThrow(() -> new NotFoundException("Не найдено пользователя с ID = " + id));
         userRepository.delete(user);
         cache.clear();
     }

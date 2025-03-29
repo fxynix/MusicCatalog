@@ -10,8 +10,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AlbumCreateDto {
-    @NotBlank(message = "Album's name can't be blank")
+
+    @NotBlank(message = "Имя создаваемого альбома не может быть пустым")
     private String name;
-    @NotNull(message =  "Album can't be without artist(-s)")
-    private List<@Positive(message = "Artist's id(-s) must be positive") Long> artistsIds;
+
+    @NotNull(message =  "Создаваемый альбом не может быть без исполнителя")
+    private List<@Positive(message =
+            "ID исполнителя(-ей) должны быть положительными") Long> artistsIds;
 }
