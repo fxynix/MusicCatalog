@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="30 seconds">
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
@@ -24,7 +23,5 @@
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
     </root>
-
-    <logger name="ch.qos.logback" level="INFO"/>
 
 </configuration>

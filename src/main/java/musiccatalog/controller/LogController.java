@@ -59,7 +59,7 @@ public class LogController {
     @ApiResponse(responseCode = "400", description = "Некорректный формат даты")
     @ApiResponse(responseCode = "404", description = "Лог-файл не найден")
     public ResponseEntity<Resource> getLogsByDate(
-            @Parameter(description = "Дата для фильтрации логов в формате yyyy-MM-dd",
+            @Parameter(description = "Дата для поиска логов в формате yyyy-MM-dd",
                     example = "2025-03-29",
                     required = true)
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date)
