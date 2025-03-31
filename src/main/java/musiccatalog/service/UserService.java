@@ -34,19 +34,13 @@ public class UserService {
     }
 
     public List<User> getAllUsers() {
-        String cacheKey = "users_all";
-        if (cache.containsKey(cacheKey)) {
-            return (List<User>) cache.get(cacheKey);
-        }
-        List<User> users = userRepository.findAll();
-        cache.put(cacheKey, users);
-        return users;
+        return userRepository.findAll();
     }
 
     public Optional<User> getUserById(long id) {
         String cacheKey = "users_id_" + id;
         if (cache.containsKey(cacheKey)) {
-            return (Optional<User>) cache.get(cacheKey);
+            return (Optional.of(((User) cache.get(cacheKey))));
         }
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Не найден пользователь с ID = " + id));

@@ -32,13 +32,7 @@ public class AlbumService {
     }
 
     public List<Album> getAllAlbums() {
-        String cacheKey = "albums_all";
-        if (cache.containsKey(cacheKey)) {
-            return (List<Album>) cache.get(cacheKey);
-        }
-        List<Album> albums = albumRepository.findAll();
-        cache.put(cacheKey, albums);
-        return albums;
+        return albumRepository.findAll();
     }
 
     public Optional<Album> getAlbumById(long id) {

@@ -24,19 +24,13 @@ public class GenreService {
     }
 
     public List<Genre> getAllGenres() {
-        String cacheKey = "genres_all";
-        if (cache.containsKey(cacheKey)) {
-            return (List<Genre>) cache.get(cacheKey);
-        }
-        List<Genre> genres = genreRepository.findAll();
-        cache.put(cacheKey, genres);
-        return genres;
+        return genreRepository.findAll();
     }
 
     public Optional<Genre> getGenreById(long id) {
         String cacheKey = "genres_id_" + id;
         if (cache.containsKey(cacheKey)) {
-            return (Optional<Genre>) cache.get(cacheKey);
+            return (Optional.of(((Genre) cache.get(cacheKey))));
         }
         Genre genre = genreRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Не найден жанр с ID " + id));

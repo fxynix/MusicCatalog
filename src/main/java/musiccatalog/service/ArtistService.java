@@ -28,19 +28,13 @@ public class ArtistService {
     }
 
     public List<Artist> getAllArtists() {
-        String cacheKey = "artists_all";
-        if (cache.containsKey(cacheKey)) {
-            return (List<Artist>) cache.get(cacheKey);
-        }
-        List<Artist> artists = artistRepository.findAll();
-        cache.put(cacheKey, artists);
-        return artists;
+        return artistRepository.findAll();
     }
 
     public Optional<Artist> getArtistById(long id) {
         String cacheKey = "artists_id_" + id;
         if (cache.containsKey(cacheKey)) {
-            return (Optional<Artist>) cache.get(cacheKey);
+            return (Optional.of(((Artist) cache.get(cacheKey))));
         }
         Artist artist = artistRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Не найдено исполнителя с ID " + id));

@@ -34,19 +34,13 @@ public class PlaylistService {
     }
 
     public List<Playlist> getAllPlaylists() {
-        String cacheKey = "playlists_all";
-        if (cache.containsKey(cacheKey)) {
-            return (List<Playlist>) cache.get(cacheKey);
-        }
-        List<Playlist> playlists = playlistRepository.findAll();
-        cache.put(cacheKey, playlists);
-        return playlists;
+        return playlistRepository.findAll();
     }
 
     public Optional<Playlist> getPlaylistById(long id) {
         String cacheKey = "playlists_id_" + id;
         if (cache.containsKey(cacheKey)) {
-            return (Optional<Playlist>) cache.get(cacheKey);
+            return (Optional.of(((Playlist) cache.get(cacheKey))));
         }
         Playlist playlist = playlistRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Не найдено плейлиста с ID " + id));

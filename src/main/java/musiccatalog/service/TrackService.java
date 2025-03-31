@@ -34,19 +34,13 @@ public class TrackService {
     }
 
     public List<Track> getAllTracks() {
-        String cacheKey = "tracks_all";
-        if (cache.containsKey(cacheKey)) {
-            return (List<Track>) cache.get(cacheKey);
-        }
-        List<Track> tracks = trackRepository.findAll();
-        cache.put(cacheKey, tracks);
-        return tracks;
+        return trackRepository.findAll();
     }
 
     public Optional<Track> getTrackById(long id) {
         String cacheKey = "tracks_id_" + id;
         if (cache.containsKey(cacheKey)) {
-            return (Optional<Track>) cache.get(cacheKey);
+            return (Optional.of(((Track) cache.get(cacheKey))));
         }
         Track track = trackRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Не найдено трека с ID = " + id));
