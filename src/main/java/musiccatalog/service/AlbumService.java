@@ -47,11 +47,11 @@ public class AlbumService {
     }
 
     public List<Album> getAlbumByName(String name)  {
-        List<Album> albums = albumRepository.findAlbumsByName(name);
         String cacheKey = "albums_name_" + name;
         if (cache.containsKey(cacheKey)) {
             return (List<Album>) cache.get(cacheKey);
         }
+        List<Album> albums = albumRepository.findAlbumsByName(name);
         cache.put(cacheKey, albums);
         return albums;
     }
@@ -70,12 +70,16 @@ public class AlbumService {
     }
 
     public Album createAlbum(AlbumCreateDto albumDto) {
+        List<Artist> artists = artistRepository.findAllById(albumDto.getArtistsIds());
+
+        if (artists.size() != albumDto.getArtistsIds().size()) {
+            List<Long> missingIds = new ArrayList<>(albumDto.getArtistsIds());
+            artists.forEach(a -> missingIds.remove(a.getId()));
+            throw new NotFoundException("Не найдены исполнители с ID: " + missingIds);
+        }
         Album album = new Album();
         album.setName(albumDto.getName());
-        if (albumDto.getArtistsIds() != null) {
-            List<Artist> artists = artistRepository.findAllById(albumDto.getArtistsIds());
-            album.setArtists(artists);
-        }
+        album.setArtists(artists);
         cache.clear();
         return albumRepository.save(album);
     }

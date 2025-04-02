@@ -19,8 +19,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -52,7 +52,7 @@ public class LogController {
                 .body(resource);
     }
 
-    @GetMapping(params = "date")
+    @GetMapping("{date}")
     @Operation(summary = "Скачать логи за указанную дату",
             description = "Возвращает файл .log с записями по введённой дате")
     @ApiResponse(responseCode = "200", description = "Лог-файл успешно отправлен")
@@ -62,7 +62,7 @@ public class LogController {
             @Parameter(description = "Дата для поиска логов в формате yyyy-MM-dd",
                     example = "2025-03-29",
                     required = true)
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date)
+            @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date)
             throws IOException {
         String dateString = date.toString();
         Path logPath;
@@ -70,7 +70,7 @@ public class LogController {
                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))) {
             logPath = Paths.get(LOG_FILE_PATH + ".log");
         } else {
-            logPath = Paths.get(LOG_FILE_PATH + "." + dateString + ".log");
+            logPath = Paths.get(LOG_FILE_PATH + "-" + dateString + ".log");
         }
 
         if (!Files.exists(logPath)) {
@@ -82,7 +82,7 @@ public class LogController {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=\"" + "musiccatalog." + dateString + "\"")
+                        "attachment; filename=\"" + "musiccatalog-" + dateString + ".log" + "\"")
                 .body(resource);
     }
 

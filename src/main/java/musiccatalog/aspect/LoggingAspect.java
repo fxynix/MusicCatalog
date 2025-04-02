@@ -15,7 +15,6 @@ public class LoggingAspect {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    // Логирование перед выполнением метода
     @Before("execution(* musiccatalog.controller.*.*(..))")
     public void logBefore(JoinPoint joinPoint) {
         if (logger.isInfoEnabled()) { // Проверяем, включен ли уровень INFO
@@ -23,7 +22,6 @@ public class LoggingAspect {
         }
     }
 
-    // Логирование после успешного выполнения метода
     @AfterReturning(pointcut = "execution(* musiccatalog.controller.*.*(..))", returning = "result")
     public void logAfterReturning(JoinPoint joinPoint, Object result) {
         if (logger.isInfoEnabled()) { // Проверяем, включен ли уровень INFO
@@ -32,7 +30,6 @@ public class LoggingAspect {
         }
     }
 
-    // Логирование ошибок
     @AfterThrowing(pointcut = "execution(* musiccatalog.controller.*.*(..))", throwing = "error")
     public void logAfterThrowing(JoinPoint joinPoint, Throwable error) {
         if (logger.isErrorEnabled()) { // Проверяем, включен ли уровень ERROR

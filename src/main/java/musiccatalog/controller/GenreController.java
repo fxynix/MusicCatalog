@@ -26,8 +26,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@Tag(name = "Genre Controller", description = "API для управления жанрами")
 @RequestMapping("/genres")
+@Tag(name = "Genre Controller", description = "API для управления жанрами")
 public class GenreController {
     private final GenreService genreService;
 
@@ -36,7 +36,7 @@ public class GenreController {
         this.genreService = genreService;
     }
 
-    @GetMapping
+    @GetMapping("/all")
     @Operation(summary = "Получить все жанры",
             description = "Возвращает все жанры")
     @ApiResponse(responseCode = "200", description = "Жанры найдены успешно")

@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
+import musiccatalog.dto.create.BulkCreateDto;
 import musiccatalog.dto.create.UserCreateDto;
 import musiccatalog.dto.get.UserGetDto;
 import musiccatalog.dto.update.UserUpdateDto;
@@ -26,8 +27,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@Tag(name = "User Controller", description = "API для управления пользователями")
 @RequestMapping("/users")
+@Tag(name = "User Controller", description = "API для управления пользователями")
 public class UserController {
     private final UserService userService;
 
@@ -36,7 +37,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping
+    @GetMapping("/all")
     @Operation(summary = "Получить всех пользователей",
             description = "Возвращает все пользователей")
     @ApiResponse(responseCode = "200", description = "Пользователи найдены успешно")
@@ -83,6 +84,27 @@ public class UserController {
     public ResponseEntity<UserGetDto> createUser(@Valid @RequestBody UserCreateDto userDto) {
         User newUser = userService.createUser(userDto);
         return new ResponseEntity<>(new UserGetDto(newUser), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/bulk")
+    @Operation(summary = "Создать много пользователей",
+            description = "Создаёт много пользователей сразу с указанными параметрами")
+    @ApiResponse(responseCode = "200", description = "Пользователи созданы успешно")
+    @ApiResponse(responseCode = "400", description = "Некорректный ввода")
+    public ResponseEntity<List<UserGetDto>> createUsersBulk(
+            @Valid @RequestBody BulkCreateDto<UserCreateDto> bulkCreateDto
+    ) {
+        List<UserGetDto> createdUsers = bulkCreateDto.getItems().stream()
+                .map(userCreateDto -> {
+                    User newUser = userService.createUser(userCreateDto);
+                    return new UserGetDto(userService.getUserById(newUser.getId())
+                            .orElseThrow(() ->
+                                    new RuntimeException("Созданынй пользователь не найден"))
+                    );
+                })
+                .toList();
+
+        return ResponseEntity.ok(createdUsers);
     }
 
     @PatchMapping("/{id}")

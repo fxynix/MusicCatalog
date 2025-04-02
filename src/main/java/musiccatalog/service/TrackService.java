@@ -93,7 +93,7 @@ public class TrackService {
         if (trackDto.getName() != null) {
             track.setName(trackDto.getName());
         }
-        if (trackDto.getDuration() != 0) {
+        if (trackDto.getDuration() != null) {
             track.setDuration(trackDto.getDuration());
         }
         if (trackDto.getGenresIds() != null) {

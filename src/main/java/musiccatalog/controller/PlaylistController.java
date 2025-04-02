@@ -26,8 +26,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@Tag(name = "Playlist Controller", description = "API для управления плейлистами")
 @RequestMapping("/playlists")
+@Tag(name = "Playlist Controller", description = "API для управления плейлистами")
 public class PlaylistController {
     private final PlaylistService playlistService;
 
@@ -36,7 +36,7 @@ public class PlaylistController {
         this.playlistService = playlistService;
     }
 
-    @GetMapping
+    @GetMapping("/all")
     @Operation(summary = "Получить все плейлиста",
             description = "Возвращает все плейлисты")
     @ApiResponse(responseCode = "200", description = "Плейлисты найдены успешно")

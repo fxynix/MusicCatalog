@@ -26,8 +26,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@Tag(name = "Album Controller", description = "API для управления альбомами")
 @RequestMapping("/albums")
+@Tag(name = "Album Controller", description = "API для управления альбомами")
 public class AlbumController {
     private final AlbumService albumService;
 
@@ -36,7 +36,7 @@ public class AlbumController {
         this.albumService = albumService;
     }
 
-    @GetMapping
+    @GetMapping("/all")
     @Operation(summary = "Получить все альбомы",
             description = "Возвращает все альбомы")
     @ApiResponse(responseCode = "200", description = "Альбомы найдены успешно")

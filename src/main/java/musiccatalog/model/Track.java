@@ -29,7 +29,7 @@ public class Track {
     private String name;
 
     @Column(name = "duration")
-    private int duration;
+    private Integer duration;
 
     @ManyToMany(mappedBy = "likedTracks", fetch = FetchType.LAZY)
     private List<User> likedByUsers;

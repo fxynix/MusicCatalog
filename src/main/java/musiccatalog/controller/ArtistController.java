@@ -26,8 +26,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@Tag(name = "Artist Controller", description = "API для управления исполнителями")
 @RequestMapping("/artists")
+@Tag(name = "Artist Controller", description = "API для управления исполнителями")
 public class ArtistController {
     private final ArtistService artistService;
 
@@ -36,7 +36,7 @@ public class ArtistController {
         this.artistService = artistService;
     }
 
-    @GetMapping
+    @GetMapping("/all")
     @Operation(summary = "Получить всех исполнителей",
             description = "Возвращает всех исполнителей")
     @ApiResponse(responseCode = "200", description = "Исполнители найдены успешно")

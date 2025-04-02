@@ -1,6 +1,7 @@
 package musiccatalog.dto.update;
 
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,6 +10,7 @@ import lombok.Setter;
 @Setter
 public class AlbumUpdateDto {
 
+    @Size(min = 1, max = 20, message = "Название альбома должно быть длиной от 1 до 20 символов")
     private String name;
 
     private List<@Positive(message =

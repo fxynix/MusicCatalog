@@ -26,8 +26,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@Tag(name = "Track Controller", description = "API для управления треками")
 @RequestMapping("/tracks")
+@Tag(name = "Track Controller", description = "API для управления треками")
 public class TrackController {
     private final TrackService trackService;
 
@@ -36,7 +36,7 @@ public class TrackController {
         this.trackService = trackService;
     }
 
-    @GetMapping
+    @GetMapping("/all")
     @Operation(summary = "Получить все треки",
             description = "Возвращает все треки")
     @ApiResponse(responseCode = "200", description = "Треки найдены успешно")
