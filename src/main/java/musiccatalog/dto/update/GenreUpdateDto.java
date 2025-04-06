@@ -11,4 +11,10 @@ public class GenreUpdateDto {
     @Size(min = 2, max = 20, message = "Название жанра должно быть длиной от 2 до 20 символов")
     private String name;
 
+    @Override
+    public String toString() {
+        return "GenreUpdateDto{"
+                + "name='" + name + '\''
+                + '}';
+    }
 }

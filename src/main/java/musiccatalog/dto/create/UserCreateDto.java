@@ -22,4 +22,13 @@ public class UserCreateDto {
     @NotBlank(message = "Пароль создаваемого пользователя не может быть пустым")
     @Size(min = 4, max = 20, message = "Пароль должен быть длиной от 4 до 20 символов")
     private String password;
+
+    @Override
+    public String toString() {
+        return "UserCreateDto{"
+                + "name='" + name + '\''
+                + ", email='" + email + '\''
+                + ", password='[PROTECTED]'"
+                + '}';
+    }
 }

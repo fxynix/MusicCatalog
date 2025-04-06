@@ -18,4 +18,13 @@ public class AlbumUpdateDto {
 
     private List<@Positive(message =
             "ID треков альбома должны быть положительными") Long> tracksIds;
+
+    @Override
+    public String toString() {
+        return "AlbumUpdateDto{"
+                + "name='" + name + '\''
+                + ", artistsIds=" + artistsIds
+                + ", tracksIds=" + tracksIds
+                + '}';
+    }
 }

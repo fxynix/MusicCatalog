@@ -37,4 +37,16 @@ public class UserGetDto {
         }
     }
 
+    @Override
+    public String toString() {
+        return "UserGetDto{"
+                + "id=" + id
+                + ", name='" + name + '\''
+                + ", email='" + email + '\''
+                + ", playlistsCreated=" + playlistsCreated
+                + ", playlistsLiked=" + playlistsLiked
+                + ", likedTracksCount=" + likedTracksCount
+                + '}';
+    }
+
 }

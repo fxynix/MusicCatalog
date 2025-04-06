@@ -23,8 +23,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<String> handleNotFoundException(NotFoundException ex) {
-
-        logger.error("Not found error: {}", ex.getMessage());
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
@@ -64,9 +62,6 @@ public class GlobalExceptionHandler {
     // Обработка 409 Conflict
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<String> handleConflictException(ConflictException ex) {
-
-        logger.error("Conflict error: {}", ex.getMessage());
-
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 

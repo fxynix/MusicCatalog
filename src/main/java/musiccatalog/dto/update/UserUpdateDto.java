@@ -26,4 +26,15 @@ public class UserUpdateDto {
     private List<@Positive(message =
             "ID понравившихся пользователю треков должны быть положительными") Long>
             likedTracksIds;
+
+    @Override
+    public String toString() {
+        return "UserUpdateDto{"
+                + "name='" + name + '\''
+                + ", email='" + email + '\''
+                + ", password='[PROTECTED]'"
+                + ", subscribedPlaylistsIds=" + subscribedPlaylistsIds
+                + ", likedTracksIds=" + likedTracksIds
+                + '}';
+    }
 }

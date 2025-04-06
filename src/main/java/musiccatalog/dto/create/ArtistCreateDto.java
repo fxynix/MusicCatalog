@@ -13,4 +13,10 @@ public class ArtistCreateDto {
     @Size(min = 4, max = 20, message = "Имя исполнителя должно быть длиной от 4 до 20 символов")
     private String name;
 
+    @Override
+    public String toString() {
+        return "ArtistCreateDto{"
+                + "name='" + name + '\''
+                + '}';
+    }
 }

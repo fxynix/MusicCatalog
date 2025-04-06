@@ -23,4 +23,12 @@ public class PlaylistCreateDto {
     @Positive(message = "ID автора должно быть положительным")
     private Long authorId;
 
+    @Override
+    public String toString() {
+        return "PlaylistCreateDto{"
+                + "name='" + name + '\''
+                + ", tracksIds=" + tracksIds
+                + ", authorId=" + authorId
+                + '}';
+    }
 }

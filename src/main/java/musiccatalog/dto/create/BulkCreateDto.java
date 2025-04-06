@@ -13,4 +13,10 @@ public class BulkCreateDto<T> {
     @Size(min = 1, message = "Минимальный размер bulk-операции - 1")
     private List<T> items = new ArrayList<>();
 
+    @Override
+    public String toString() {
+        return "BulkCreateDto{"
+                + "items=" + items
+                + '}';
+    }
 }

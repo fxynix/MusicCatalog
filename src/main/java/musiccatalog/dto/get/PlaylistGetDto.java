@@ -28,4 +28,15 @@ public class PlaylistGetDto {
 
     }
 
+    @Override
+    public String toString() {
+        return "PlaylistGetDto{"
+                + "id=" + id
+                + ", name='" + name + '\''
+                + ", author='" + author + '\''
+                + ", subscribersCount=" + subscribersCount
+                + ", tracks=" + tracks
+                + '}';
+    }
+
 }

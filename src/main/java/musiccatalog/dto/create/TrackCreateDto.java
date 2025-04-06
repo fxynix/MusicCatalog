@@ -31,4 +31,14 @@ public class TrackCreateDto {
 
     @NotEmpty(message = "Трек должен иметь хоть 1 жанр")
     private List<@Positive(message = "ID жанра должно быть положительным") Long> genresIds;
+
+    @Override
+    public String toString() {
+        return "TrackCreateDto{"
+                + "name='" + name + '\''
+                + ", duration=" + duration
+                + ", albumId=" + albumId
+                + ", genresIds=" + genresIds
+                + '}';
+    }
 }

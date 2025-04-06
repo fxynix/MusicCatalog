@@ -15,4 +15,12 @@ public class ArtistUpdateDto {
 
     private List<@Positive(message =
             "ID альбомов исполнителя должны быть положительными") Long> albumsIds;
+
+    @Override
+    public String toString() {
+        return "ArtistUpdateDto{"
+                + "name='" + name + '\''
+                + ", albumsIds=" + albumsIds
+                + '}';
+    }
 }

@@ -21,4 +21,12 @@ public class AlbumCreateDto {
     @NotNull(message =  "Создаваемый альбом не может быть без исполнителя")
     private List<@Positive(message =
             "ID исполнителя(-ей) должны быть положительными") Long> artistsIds;
+
+    @Override
+    public String toString() {
+        return "AlbumCreateDto{"
+                + "name='" + name + '\''
+                + ", artistsIds=" + artistsIds
+                + '}';
+    }
 }

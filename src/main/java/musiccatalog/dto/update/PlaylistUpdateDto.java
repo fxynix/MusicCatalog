@@ -19,4 +19,12 @@ public class PlaylistUpdateDto {
     @Positive(message = "ID автора плейлиста должно быть положительным")
     private Long authorId;
 
+    @Override
+    public String toString() {
+        return "PlaylistUpdateDto{"
+                + "name='" + name + '\''
+                + ", tracksIds=" + tracksIds
+                + ", authorId=" + authorId
+                + '}';
+    }
 }

@@ -19,4 +19,13 @@ public class GenreGetDto {
         }
     }
 
+    @Override
+    public String toString() {
+        return "GenreGetDto{"
+                + "id=" + id
+                + ", name='" + name + '\''
+                + ", tracksCount=" + tracksCount
+                + '}';
+    }
+
 }

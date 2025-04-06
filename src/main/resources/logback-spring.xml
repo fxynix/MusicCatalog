@@ -23,6 +23,10 @@
         <appender-ref ref="FILE"/>
     </logger>
 
+    <logger name="musiccatalog.exception.GlobalExceptionHandler" level="INFO" additivity="false">
+        <appender-ref ref="FILE"/>
+    </logger>
+
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
     </root>

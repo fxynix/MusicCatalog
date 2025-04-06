@@ -24,4 +24,13 @@ public class ArtistGetDto {
 
     }
 
+    @Override
+    public String toString() {
+        return "ArtistGetDto{"
+                + "id=" + id
+                + ", name='" + name + '\''
+                + ", albums=" + albums
+                + '}';
+    }
+
 }

@@ -29,4 +29,14 @@ public class AlbumGetDto {
 
     }
 
+    @Override
+    public String toString() {
+        return "AlbumGetDto{"
+                + "id=" + id
+                + ", name='" + name + '\''
+                + ", artists=" + artists
+                + ", tracks=" + tracks
+                + '}';
+    }
+
 }

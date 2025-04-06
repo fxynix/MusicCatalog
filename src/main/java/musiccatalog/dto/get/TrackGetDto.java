@@ -30,4 +30,16 @@ public class TrackGetDto {
                 .toList();
     }
 
+    @Override
+    public String toString() {
+        return "TrackGetDto{"
+                + "id=" + id
+                + ", name='" + name + '\''
+                + ", duration=" + duration
+                + ", albumName='" + albumName + '\''
+                + ", genres=" + genres
+                + ", artists=" + artists
+                + '}';
+    }
+
 }

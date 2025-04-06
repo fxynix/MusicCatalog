@@ -63,7 +63,7 @@ public class AlbumService {
         }
         List<Album> albums = albumRepository.findAlbumsByGenreName(genreName);
         if (albums.isEmpty()) {
-            throw new NotFoundException("Подхлдящих альбомов не найдено");
+            throw new NotFoundException("Подходящих альбомов не найдено");
         }
         cache.put(cacheKey, albums);
         return albums;

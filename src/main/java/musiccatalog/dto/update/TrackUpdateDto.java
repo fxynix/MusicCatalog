@@ -26,4 +26,13 @@ public class TrackUpdateDto {
     @Positive(message = "ID альбома, к которому отнисится трек, должен быть положительным")
     private Long albumId;
 
+    @Override
+    public String toString() {
+        return "TrackUpdateDto{"
+                + "name='" + name + '\''
+                + ", duration=" + duration
+                + ", genresIds=" + genresIds
+                + ", albumId=" + albumId
+                + '}';
+    }
 }
