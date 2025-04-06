@@ -28,7 +28,7 @@ public class UserCreateDto {
         return "UserCreateDto{"
                 + "name='" + name + '\''
                 + ", email='" + email + '\''
-                + ", password='${PASSWORD}'"
+                + ", pаssword='{PАSSWORD}'"
                 + '}';
     }
 }

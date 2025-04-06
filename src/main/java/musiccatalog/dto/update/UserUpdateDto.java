@@ -32,7 +32,7 @@ public class UserUpdateDto {
         return "UserUpdateDto{"
                 + "name='" + name + '\''
                 + ", email='" + email + '\''
-                + ", password='${PASSWORD}'"
+                + ", pаssword='{PАSSWORD}'"
                 + ", subscribedPlaylistsIds=" + subscribedPlaylistsIds
                 + ", likedTracksIds=" + likedTracksIds
                 + '}';
