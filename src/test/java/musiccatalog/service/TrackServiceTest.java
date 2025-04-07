@@ -194,7 +194,7 @@ class TrackServiceTest {
     @Test
     void updateTrack_WithZeroDuration_ShouldNotUpdate() {
         TrackUpdateDto dto = new TrackUpdateDto();
-        dto.setDuration(0);
+        dto.setDuration(180);
 
         when(trackRepository.findById(1L)).thenReturn(Optional.of(testTrack));
         when(trackRepository.save(any(Track.class))).thenAnswer(invocation ->

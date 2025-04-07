@@ -18,14 +18,14 @@ public class InMemoryCache {
         cache.put(key, value);
 
         Logger logger = Logger.getLogger(InMemoryCache.class.getName());
-        String msg = String.format("Новый запрос сохранён в кэше. Текущий размер кэша: %s",
+        String msg = String.format("New request added to cache. Current cache size: %s",
                 cache.size());
         logger.info(msg);
     }
 
     public Object get(String key) {
         Logger logger = Logger.getLogger(InMemoryCache.class.getName());
-        String msg = "Вызов запроса из кэша с ключём: " + key;
+        String msg = "Request from cache with key: " + key;
         logger.info(msg);
         return cache.get(key);
     }
@@ -37,7 +37,7 @@ public class InMemoryCache {
     public void clear() {
         cache.clear();
         Logger logger = Logger.getLogger(InMemoryCache.class.getName());
-        String msg = String.format("Кэш очищен. Текущий размер кэша: %s", cache.size());
+        String msg = String.format("Cache cleared. Current cache size: %s", cache.size());
         logger.info(msg);
     }
 }
