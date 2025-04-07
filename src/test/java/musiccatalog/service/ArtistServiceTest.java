@@ -6,6 +6,8 @@ import static org.mockito.Mockito.*;
 
 import java.util.List;
 import java.util.Optional;
+
+import musiccatalog.cache.InMemoryCache;
 import musiccatalog.dto.create.ArtistCreateDto;
 import musiccatalog.dto.update.ArtistUpdateDto;
 import musiccatalog.exception.NotFoundException;

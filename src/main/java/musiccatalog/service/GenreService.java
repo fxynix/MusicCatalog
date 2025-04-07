@@ -2,6 +2,7 @@ package musiccatalog.service;
 
 import java.util.List;
 import java.util.Optional;
+import musiccatalog.cache.InMemoryCache;
 import musiccatalog.dto.create.GenreCreateDto;
 import musiccatalog.dto.update.GenreUpdateDto;
 import musiccatalog.exception.ConflictException;

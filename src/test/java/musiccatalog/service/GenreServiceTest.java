@@ -1,5 +1,6 @@
 package musiccatalog.service;
 
+import musiccatalog.cache.InMemoryCache;
 import musiccatalog.dto.create.GenreCreateDto;
 import musiccatalog.dto.update.GenreUpdateDto;
 import musiccatalog.exception.ConflictException;

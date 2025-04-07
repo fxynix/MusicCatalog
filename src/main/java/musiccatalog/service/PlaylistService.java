@@ -3,6 +3,7 @@ package musiccatalog.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import musiccatalog.cache.InMemoryCache;
 import musiccatalog.dto.create.PlaylistCreateDto;
 import musiccatalog.dto.update.PlaylistUpdateDto;
 import musiccatalog.exception.NotFoundException;

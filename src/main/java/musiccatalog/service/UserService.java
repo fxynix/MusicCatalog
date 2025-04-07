@@ -3,6 +3,7 @@ package musiccatalog.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import musiccatalog.cache.InMemoryCache;
 import musiccatalog.dto.create.UserCreateDto;
 import musiccatalog.dto.update.UserUpdateDto;
 import musiccatalog.exception.ConflictException;

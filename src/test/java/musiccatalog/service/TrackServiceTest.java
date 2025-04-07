@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import musiccatalog.cache.InMemoryCache;
 import musiccatalog.dto.create.TrackCreateDto;
 import musiccatalog.dto.update.TrackUpdateDto;
 import musiccatalog.exception.NotFoundException;
@@ -83,6 +85,24 @@ class TrackServiceTest {
     void getTrackById_WhenNotFound_ShouldThrowException() {
         when(trackRepository.findById(1L)).thenReturn(Optional.empty());
         assertThrows(NotFoundException.class, () -> trackService.getTrackById(1L));
+    }
+
+    @Test
+    void deleteTrack_ShouldDeleteSuccessfully() {
+        when(trackRepository.findById(1L)).thenReturn(Optional.of(testTrack));
+
+        trackService.deleteTrack(1L);
+
+        verify(trackRepository).delete(testTrack);
+        verify(cache).clear();
+    }
+
+    @Test
+    void deleteTrack_WhenNotFound_ShouldThrowException() {
+        when(trackRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> trackService.deleteTrack(1L));
+        verify(trackRepository, never()).delete(any());
     }
 
     @Test
@@ -230,14 +250,24 @@ class TrackServiceTest {
         when(genreRepository.findAllById(anyList())).thenReturn(Collections.emptyList());
         when(trackRepository.save(any(Track.class))).thenAnswer(invocation -> {
             Track saved = invocation.getArgument(0);
-            saved.setId(1L); // Добавляем установку ID
+            saved.setId(1L);
             return saved;
         });
 
         Track result = trackService.createTrack(dto);
 
-        assertNotNull(result); // Проверяем что объект не null
+        assertNotNull(result);
         assertTrue(result.getGenres().isEmpty());
         verify(cache).clear();
+    }
+
+    @Test
+    void getAllTracks_ShouldReturnAllTracks() {
+        when(trackRepository.findAll()).thenReturn(List.of(testTrack));
+
+        List<Track> result = trackService.getAllTracks();
+
+        assertEquals(1, result.size());
+        assertEquals(testTrack, result.get(0));
     }
 }

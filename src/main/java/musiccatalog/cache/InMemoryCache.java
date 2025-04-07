@@ -1,4 +1,4 @@
-package musiccatalog.service;
+package musiccatalog.cache;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

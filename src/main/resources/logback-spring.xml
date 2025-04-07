@@ -27,7 +27,7 @@
         <appender-ref ref="FILE"/>
     </logger>
 
-    <logger name="musiccatalog.service.InMemoryCache" level="DEBUG" additivity="false">
+    <logger name="musiccatalog.cache.InMemoryCache" level="DEBUG" additivity="false">
         <appender-ref ref="FILE"/>
     </logger>
 
