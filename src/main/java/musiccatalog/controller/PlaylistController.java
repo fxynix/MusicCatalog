@@ -80,7 +80,7 @@ public class PlaylistController {
     @PostMapping
     @Operation(summary = "Создать новый плейлист",
             description = "Создаёт новый плейлист")
-    @ApiResponse(responseCode = "200", description = "Плейлист создан успешно")
+    @ApiResponse(responseCode = "201", description = "Плейлист создан успешно")
     @ApiResponse(responseCode = "400", description = "Некорректный ввод")
     public ResponseEntity<PlaylistGetDto> createPlaylist(
             @Valid @RequestBody PlaylistCreateDto playlistDto) {

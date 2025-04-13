@@ -78,7 +78,7 @@ public class GenreController {
     @PostMapping
     @Operation(summary = "Создать нового жанра",
             description = "Создаёт новый жанр")
-    @ApiResponse(responseCode = "200", description = "Жанр создан успешно")
+    @ApiResponse(responseCode = "201", description = "Жанр создан успешно")
     @ApiResponse(responseCode = "400", description = "Некорректный ввод")
     public ResponseEntity<GenreGetDto> createGenre(@Valid @RequestBody GenreCreateDto genreDto) {
         Genre newGenre = genreService.createGenre(genreDto);

@@ -79,7 +79,7 @@ public class UserController {
     @PostMapping
     @Operation(summary = "Создать нового пользователя",
             description = "Создаёт нового пользователя")
-    @ApiResponse(responseCode = "200", description = "Пользователь создан успешно")
+    @ApiResponse(responseCode = "201", description = "Пользователь создан успешно")
     @ApiResponse(responseCode = "400", description = "Некорректный ввод")
     public ResponseEntity<UserGetDto> createUser(@Valid @RequestBody UserCreateDto userDto) {
         User newUser = userService.createUser(userDto);
@@ -89,10 +89,10 @@ public class UserController {
     @PostMapping("/bulk")
     @Operation(summary = "Создать много пользователей",
             description = "Создаёт много пользователей сразу с указанными параметрами")
-    @ApiResponse(responseCode = "200", description = "Пользователи созданы успешно")
+    @ApiResponse(responseCode = "201", description = "Пользователи созданы успешно")
     @ApiResponse(responseCode = "400", description = "Некорректный ввода")
     public ResponseEntity<List<UserGetDto>> createUsersBulk(
-            @Valid @RequestBody BulkCreateDto<UserCreateDto> bulkCreateDto
+            @Valid @RequestBody BulkCreateDto<@Valid UserCreateDto> bulkCreateDto
     ) {
         List<UserGetDto> createdUsers = bulkCreateDto.getItems().stream()
                 .map(userCreateDto -> {

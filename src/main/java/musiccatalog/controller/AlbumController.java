@@ -96,7 +96,7 @@ public class AlbumController {
 
     @PostMapping
     @Operation(summary = "Создать альбом", description = "Создаёт новый альбом")
-    @ApiResponse(responseCode = "200", description = "Альбом успешно создан")
+    @ApiResponse(responseCode = "201", description = "Альбом успешно создан")
     @ApiResponse(responseCode = "400", description = "Некорректный ввод")
     public ResponseEntity<AlbumGetDto> createAlbum(@Valid @RequestBody AlbumCreateDto albumDto) {
         Album newAlbum = albumService.createAlbum(albumDto);

@@ -97,7 +97,7 @@ public class TrackController {
     @PostMapping
     @Operation(summary = "Создать новый трек",
             description = "Создаёт новый трек")
-    @ApiResponse(responseCode = "200", description = "Трек создан успешно")
+    @ApiResponse(responseCode = "201", description = "Трек создан успешно")
     @ApiResponse(responseCode = "400", description = "Некорректный ввод")
     public ResponseEntity<TrackGetDto> createTrack(@Valid @RequestBody TrackCreateDto trackDto) {
         Track newTrack = trackService.createTrack(trackDto);

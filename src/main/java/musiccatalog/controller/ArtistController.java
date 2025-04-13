@@ -78,7 +78,7 @@ public class ArtistController {
     @PostMapping
     @Operation(summary = "Создать нового исполнителя",
             description = "Создаёт нового исполнителя")
-    @ApiResponse(responseCode = "200", description = "Исполнитель создан успешно")
+    @ApiResponse(responseCode = "201", description = "Исполнитель создан успешно")
     @ApiResponse(responseCode = "400", description = "Некорректный ввод")
     public ResponseEntity<ArtistGetDto> createArtist(
             @Valid @RequestBody ArtistCreateDto artistDto) {
