@@ -3,11 +3,11 @@ package musiccatalog.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.HashMap;
 import java.util.Map;
 import musiccatalog.service.VisitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,20 +28,17 @@ public class VisitController {
     @GetMapping("/count")
     @Operation(summary = "Получить количество всех запросов на данный URL",
             description = "Возвращает количество запросов, которые "
-                    + "были сделаны на данынй URL с момента запуска")
+                    + "были сделаны на данный URL с момента запуска")
     @ApiResponse(responseCode = "200", description = "Запрос обработан успешно")
     public ResponseEntity<Integer> getVisitCount(@RequestParam String url) {
-        int count = visitService.getVisitCount(url);
-        return ResponseEntity.ok(count);
+        return ResponseEntity.ok(visitService.getVisitCount(url));
     }
 
     @GetMapping("/total")
     @Operation(summary = "Получить общее количество всех запросов на сайт",
             description = "Возвращает общее количество всех запросов на сайт с момента запуска")
-    public ResponseEntity<Map<String, Integer>> getTotalVisitCount() {
-        Map<String, Integer> totalCount = new HashMap<>();
-        totalCount.put("Общее число запросов", visitService.getTotalVisitCount());
-        return ResponseEntity.ok(totalCount);
+    public ResponseEntity<Integer> getTotalVisitCount() {
+        return ResponseEntity.ok(visitService.getTotalVisitCount());
     }
 
     @GetMapping("/all")
@@ -49,7 +46,15 @@ public class VisitController {
             description = "Возвращает URL, на которые были сделаны запросы "
                     + "с момента запуска, и их количество")
     public ResponseEntity<Map<String, Integer>> getAllVisitCounts() {
-        Map<String, Integer> allCounts = visitService.getAllVisitCounts();
-        return ResponseEntity.ok(allCounts);
+        return ResponseEntity.ok(visitService.getAllVisitCounts());
+
+    }
+
+    @DeleteMapping("/reset")
+    @Operation(summary = "Сбросить все счётчики посещений")
+    @ApiResponse(responseCode = "204", description = "Все счётчики сброшены")
+    public ResponseEntity<Void> resetAllVisitCounts() {
+        visitService.resetAllVisitCounts();
+        return ResponseEntity.noContent().build();
     }
 }

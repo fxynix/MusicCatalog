@@ -5,14 +5,17 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.concurrent.CompletableFuture;
 import musiccatalog.exception.NotFoundException;
+import musiccatalog.exception.TooQuicklyException;
 import musiccatalog.service.LogService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -31,6 +34,7 @@ public class LogController {
 
     private final LogService logService;
 
+    @Autowired
     public LogController(LogService logService) {
         this.logService = logService;
     }
@@ -43,64 +47,55 @@ public class LogController {
     @ApiResponse(responseCode = "500", description = "Ошибка сервера")
     public ResponseEntity<String> generateLogsByDate(
             @Parameter(description = "Дата для генерации логов в формате yyyy-MM-dd",
-                    example = "2025-03-29",
+                    example = "2025-04-13",
                     required = true)
             @PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
-        try {
-            String dateString = date.toString();
-            CompletableFuture<String> future = logService.generateLogFileForDateAsync(dateString);
-            return ResponseEntity.accepted().body("Задача запущена. ID: " + future.get());
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
-                    .body("Задача была прервана: " + e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Ошибка: " + e.getMessage());
-        }
+
+        CompletableFuture<String> future = logService.generateLogFileForDateAsync(date.toString());
+        String taskId = future.join();
+        return new ResponseEntity<>("Task ID: " + taskId, HttpStatus.ACCEPTED);
     }
 
-    @GetMapping("/{logId}/status")
+    @GetMapping("/{taskId}/status")
     @Operation(summary = "Получить статус задачи по ID",
             description = "Возвращает статус задачи по её идентификатору")
     @ApiResponse(responseCode = "200", description = "Статус задачи получен")
     @ApiResponse(responseCode = "404", description = "Задача не найдена")
-    public ResponseEntity<String> getTaskStatus(
-            @Parameter(description = "ID задачи", required = true)
-            @PathVariable String logId) {
-        if (logService.isTaskCompleted(logId)) {
-            return ResponseEntity.ok("Задача завершена");
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Задача не найдена или ещё не завершена");
-        }
+    public ResponseEntity<String> getTaskStatus(@PathVariable String taskId) {
+        return ResponseEntity.ok("Status: " + logService.getTaskStatus(taskId));
     }
 
-    @GetMapping("/{logId}/file")
+    @GetMapping("/{taskId}/file")
     @Operation(summary = "Получить лог-файл по ID",
-            description = "Возвращает лог-файл по его идентификатору")
+            description = "Возвращает лог-файл по ID задачи")
     @ApiResponse(responseCode = "200", description = "Файл успешно получен")
     @ApiResponse(responseCode = "404", description = "Файл не найден")
+    @ApiResponse(responseCode = "425", description = "Слишком быстро. Задача ещё обрабатывается")
     @ApiResponse(responseCode = "500", description = "Ошибка сервера")
     public ResponseEntity<Resource> getLogFileById(
             @Parameter(description = "ID лог-файла", required = true)
-            @PathVariable String logId) {
+            @PathVariable String taskId) {
+        String status = logService.getTaskStatus(taskId);
+        if (status.equals("PROCESSING")) {
+            throw new TooQuicklyException("Задача ещё не завершена");
+        }
+        if (status.startsWith("FAILED")) {
+            throw new NotFoundException("Задача провалена и лог-файл не был создан");
+        }
         try {
-            String logFilePath = logService.getLogFilePath(logId);
-            if (logFilePath == null) {
-                throw new NotFoundException("Файл с указанным ID не найден");
+            String filePath = logService.getLogFilePath(taskId);
+            Path path = Paths.get(filePath);
+            if (!Files.exists(path)) {
+                throw new NotFoundException("Файл логов не найден");
             }
-
-            Path filePath = Paths.get(logFilePath);
-            Resource resource = new UrlResource(filePath.toUri());
-
+            Resource resource = new InputStreamResource(Files.newInputStream(path));
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION,
-                            "attachment; filename=" + filePath.getFileName().toString())
+                            "attachment; filename=logs-" + taskId + ".log")
                     .contentType(MediaType.TEXT_PLAIN)
                     .body(resource);
         } catch (IOException e) {
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }

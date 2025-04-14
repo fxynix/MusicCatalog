@@ -24,4 +24,8 @@ public class VisitService {
     public Map<String, Integer> getAllVisitCounts() {
         return new ConcurrentHashMap<>(visitCounts);
     }
+
+    public void resetAllVisitCounts() {
+        visitCounts.clear();
+    }
 }

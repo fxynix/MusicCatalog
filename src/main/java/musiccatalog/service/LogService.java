@@ -1,7 +1,5 @@
 package musiccatalog.service;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -10,6 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 import musiccatalog.exception.NotFoundException;
 import musiccatalog.exception.ProcessingFileException;
 import org.springframework.scheduling.annotation.Async;
@@ -22,74 +21,66 @@ public class LogService {
     private static final String LOGS_DIR = "logs/";
 
     private final Map<String, String> logFiles = new ConcurrentHashMap<>();
-    private final Map<String, Boolean> taskStatus = new ConcurrentHashMap<>();
+    private final Map<String, String> taskStatus = new ConcurrentHashMap<>();
+
 
     @Async
     public CompletableFuture<String> generateLogFileForDateAsync(String date) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                String existingLogId = findLogIdByDate(date);
-                if (existingLogId != null) {
-                    return existingLogId;
-                }
+        String taskId = UUID.randomUUID().toString();
+        taskStatus.put(taskId, "PROCESSING");
 
-                Path logPath = Paths.get(LOG_FILE_PATH);
-                if (!Files.exists(logPath)) {
-                    throw new FileNotFoundException("Лог-файл не найден: " + LOG_FILE_PATH);
+        CompletableFuture.runAsync(() -> {
+
+            try {
+                Thread.sleep(15000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                taskStatus.put(taskId, "ERROR: Задача прервана");
+                return;
+            }
+
+            try {
+                Path sourcePath = Paths.get(LOG_FILE_PATH);
+                if (!Files.exists(sourcePath)) {
+                    throw new ProcessingFileException("Исходный лог-файл не найден");
                 }
 
                 List<String> filteredLines;
-                try (var lines = Files.lines(logPath)) {
+                try (Stream<String> lines = Files.lines(sourcePath)) {
                     filteredLines = lines
                             .filter(line -> line.startsWith(date))
                             .toList();
                 }
 
                 if (filteredLines.isEmpty()) {
-                    throw new NotFoundException("Нет записей в логах для указанной даты");
+                    taskStatus.put(taskId, "FAILED: Логи по указанной дате не найдены");
+                    throw new NotFoundException("Логи по указанной дате не найдены");
                 }
 
                 Files.createDirectories(Paths.get(LOGS_DIR));
-                String logFileName = LOGS_DIR + "musiccatalog-" + date + ".log";
-                Path logFilePath = Paths.get(logFileName);
+                String filename = LOGS_DIR + "logs-" + date + "-" + taskId + ".log";
+                Files.write(Paths.get(filename), filteredLines);
 
-                if (Files.exists(logFilePath)) {
-                    String logId = UUID.randomUUID().toString();
-                    logFiles.put(logId, logFileName);
-                    taskStatus.put(logId, true);
-                    return logId;
-                }
-
-                Files.write(logFilePath, filteredLines);
-
-                String logId = UUID.randomUUID().toString();
-                logFiles.put(logId, logFileName);
-                taskStatus.put(logId, true);
-
-                return logId;
-            } catch (FileNotFoundException e) {
-                throw new ProcessingFileException("Лог-файл не найден");
-            } catch (IOException e) {
-                String logId = UUID.randomUUID().toString();
-                taskStatus.put(logId, false);
-                throw new ProcessingFileException("Ошибка обработки файла");
+                logFiles.put(taskId, filename);
+                taskStatus.put(taskId, "COMPLETED");
+            } catch (Exception e) {
+                String errorMsg = e.getMessage();
+                taskStatus.put(taskId, "FAILED: " + errorMsg);
             }
         });
+
+        return CompletableFuture.completedFuture(taskId);
     }
 
-    private String findLogIdByDate(String date) {
-        return logFiles.entrySet().stream()
-                .filter(entry -> entry.getValue().contains(date))
-                .map(Map.Entry::getKey)
-                .findFirst()
-                .orElse(null);
+    public String getLogFilePath(String taskId) {
+        return logFiles.get(taskId);
     }
 
-    public String getLogFilePath(String logId) {
-        return logFiles.get(logId);
-    }
-
-    public boolean isTaskCompleted(String logId) {
-        return taskStatus.getOrDefault(logId, false);
+    public String getTaskStatus(String taskId) {
+        String status = taskStatus.getOrDefault(taskId, "NOT FOUND TASK");
+        if (status.equals("NOT FOUND TASK")) {
+            throw new NotFoundException("Не найдено задачи с ID = " + taskId);
+        }
+        return status;
     }
 }
