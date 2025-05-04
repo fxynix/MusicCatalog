@@ -21,13 +21,13 @@ public class TrackGetDto {
         this.id = track.getId();
         this.name = track.getName();
         this.duration = track.getDuration();
-        this.albumName = track.getAlbum().getName();
-        this.genres = track.getGenres().stream()
-                .map(Genre::getName)
-                .toList();
-        this.artists = track.getAlbum().getArtists().stream()
-                .map(Artist::getName)
-                .toList();
+        this.albumName = track.getAlbum() != null ? track.getAlbum().getName() : null;
+        this.genres = track.getGenres() != null
+                ? track.getGenres().stream().map(Genre::getName).toList()
+                : List.of();
+        this.artists = track.getAlbum() != null && track.getAlbum().getArtists() != null
+                ? track.getAlbum().getArtists().stream().map(Artist::getName).toList()
+                : List.of();
     }
 
     @Override

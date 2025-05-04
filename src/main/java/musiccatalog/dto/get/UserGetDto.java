@@ -13,8 +13,6 @@ public class UserGetDto {
     private String name;
     private String email;
     private List<String> playlistsCreated;
-    private List<String> playlistsLiked;
-    private int likedTracksCount;
 
     public UserGetDto(User user) {
         this.id = user.getId();
@@ -25,16 +23,6 @@ public class UserGetDto {
                     .map(Playlist::getName)
                     .toList();
         }
-        if (user.getPlaylistsSubscribed() != null) {
-            this.playlistsLiked = user.getPlaylistsSubscribed().stream()
-                    .map(Playlist::getName)
-                    .toList();
-        }
-        if (user.getLikedTracks() == null) {
-            this.likedTracksCount = 0;
-        } else {
-            this.likedTracksCount = user.getLikedTracks().size();
-        }
     }
 
     @Override
@@ -44,8 +32,6 @@ public class UserGetDto {
                 + ", name='" + name + '\''
                 + ", email='" + email + '\''
                 + ", playlistsCreated=" + playlistsCreated
-                + ", playlistsLiked=" + playlistsLiked
-                + ", likedTracksCount=" + likedTracksCount
                 + '}';
     }
 

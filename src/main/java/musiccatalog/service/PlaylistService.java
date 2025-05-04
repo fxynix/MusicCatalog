@@ -59,6 +59,16 @@ public class PlaylistService {
         return playlist;
     }
 
+    public List<Playlist> getPlaylistByAuthor(Long authorId)  {
+        String cacheKey = "playlists_author_" + authorId;
+        if (cache.containsKey(cacheKey)) {
+            return (List<Playlist>) cache.get(cacheKey);
+        }
+        List<Playlist> playlist = playlistRepository.findPlaylistByAuthorId(authorId);
+        cache.put(cacheKey, playlist);
+        return playlist;
+    }
+
     public Playlist createPlaylist(PlaylistCreateDto playlistDto) {
         Playlist playlist = new Playlist();
         playlist.setName(playlistDto.getName());

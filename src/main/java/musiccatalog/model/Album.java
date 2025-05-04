@@ -35,7 +35,7 @@ public class Album {
             inverseJoinColumns = @JoinColumn(name = "artist_id"))
     private List<Artist> artists;
 
-    @OneToMany(mappedBy = "album", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "album", cascade = CascadeType.ALL)
     private List<Track> tracks;
 
 }

@@ -61,6 +61,14 @@ public class UserController {
         return ResponseEntity.ok(new UserGetDto(user));
     }
 
+    @GetMapping("/{id}/profile")
+    @Operation(summary = "Получить профиль пользователя")
+    public ResponseEntity<UserGetDto> getUserProfile(@PathVariable Long id) {
+        User user = userService.getUserById(id)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+        return ResponseEntity.ok(new UserGetDto(user));
+    }
+
     @GetMapping(params = "name")
     @Operation(summary = "Получить пользователя по имени",
             description = "Возвращает пользователя по указанному имени")

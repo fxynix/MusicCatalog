@@ -31,9 +31,6 @@ public class Track {
     @Column(name = "duration")
     private Integer duration;
 
-    @ManyToMany(mappedBy = "likedTracks", fetch = FetchType.LAZY)
-    private List<User> likedByUsers;
-
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},
             fetch = FetchType.LAZY)
     @JoinTable(name = "track_genres",

@@ -115,7 +115,7 @@
 							<goal>prepare-agent</goal>
 						</goals>
 						<configuration>
-							<destFile>${project.build.directory}/jacoco.exec</destFile>
+							<destFile>../target/jacoco.exec</destFile>
 						</configuration>
 					</execution>
 					<execution>

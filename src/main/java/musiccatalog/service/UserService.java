@@ -1,6 +1,5 @@
 package musiccatalog.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import musiccatalog.cache.InMemoryCache;
@@ -8,11 +7,8 @@ import musiccatalog.dto.create.UserCreateDto;
 import musiccatalog.dto.update.UserUpdateDto;
 import musiccatalog.exception.ConflictException;
 import musiccatalog.exception.NotFoundException;
-import musiccatalog.model.Playlist;
-import musiccatalog.model.Track;
 import musiccatalog.model.User;
 import musiccatalog.repository.PlaylistRepository;
-import musiccatalog.repository.TrackRepository;
 import musiccatalog.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,15 +18,13 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PlaylistRepository playlistRepository;
-    private final TrackRepository trackRepository;
     private final InMemoryCache cache;
 
     @Autowired
     public UserService(UserRepository userRepository, PlaylistRepository playlistRepository,
-                       TrackRepository trackRepository, InMemoryCache cache) {
+                       InMemoryCache cache) {
         this.userRepository = userRepository;
         this.playlistRepository = playlistRepository;
-        this.trackRepository = trackRepository;
         this.cache = cache;
     }
 
@@ -88,31 +82,9 @@ public class UserService {
             user.setPassword(userDto.getPassword());
         }
 
-        if (userDto.getSubscribedPlaylistsIds() != null) {
-            user.setPlaylistsSubscribed(playlistRepository.findAllById(
-                    userDto.getSubscribedPlaylistsIds()));
-        }
-        List<Playlist> playlists = new ArrayList<>();
-        if (userDto.getSubscribedPlaylistsIds() != null
-                && !userDto.getSubscribedPlaylistsIds().isEmpty()) {
-            for (Long playlistId : userDto.getSubscribedPlaylistsIds()) {
-                Playlist playlist = playlistRepository.findById(playlistId)
-                        .orElseThrow(() -> new NotFoundException("Плейлист не найден"));
-                playlist.getSubscribers().add(user);
-                playlists.add(playlist);
-            }
-            user.setPlaylistsSubscribed(playlists);
-        }
-        List<Track> tracks = new ArrayList<>();
-        if (userDto.getLikedTracksIds() != null
-                && !userDto.getLikedTracksIds().isEmpty()) {
-            for (Long trackId : userDto.getLikedTracksIds()) {
-                Track track = trackRepository.findById(trackId)
-                        .orElseThrow(() -> new NotFoundException(""));
-                track.getLikedByUsers().add(user);
-                tracks.add(track);
-            }
-            user.setLikedTracks(tracks);
+        if (userDto.getCreatedPlaylistsIds() != null) {
+            user.setPlaylistsCreated(playlistRepository.findAllById(
+                    userDto.getCreatedPlaylistsIds()));
         }
         cache.clear();
         return userRepository.save(user);

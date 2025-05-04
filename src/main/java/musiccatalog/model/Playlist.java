@@ -41,12 +41,4 @@ public class Playlist {
     @JoinColumn(name = "user_id")
     private User author;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},
-            fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "playlist_subscribers",
-            joinColumns = @JoinColumn(name = "playlist_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private List<User> subscribers;
 }

@@ -9,6 +9,7 @@ import musiccatalog.dto.update.AlbumUpdateDto;
 import musiccatalog.exception.NotFoundException;
 import musiccatalog.model.Album;
 import musiccatalog.model.Artist;
+import musiccatalog.model.Track;
 import musiccatalog.repository.AlbumRepository;
 import musiccatalog.repository.ArtistRepository;
 import musiccatalog.repository.TrackRepository;
@@ -88,12 +89,6 @@ public class AlbumService {
     public Album updateAlbum(long id, AlbumUpdateDto albumDto) {
         Album album = albumRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Не найден альбом с ID = " + id));
-        if (albumDto.getArtistsIds() != null) {
-            album.setArtists(artistRepository.findAllById(albumDto.getArtistsIds()));
-        }
-        if (albumDto.getTracksIds() != null) {
-            album.setTracks(trackRepository.findAllById(albumDto.getTracksIds()));
-        }
         if (albumDto.getName() != null) {
             album.setName(albumDto.getName());
         }
@@ -108,6 +103,34 @@ public class AlbumService {
             }
             album.setArtists(artists);
         }
+        for (Long trackId : albumDto.getTracksIds()) {
+            Track track = trackRepository.findById(trackId)
+                    .orElseThrow(() -> new NotFoundException(
+                            "Указанный трек не найден"));
+            track.setAlbum(album);
+        }
+        List<Track> oldTracks = new ArrayList<>(album.getTracks());
+
+        List<Track> newTracks = new ArrayList<>();
+        if (albumDto.getTracksIds() != null) {
+            for (Long trackId : albumDto.getTracksIds()) {
+                Track track = trackRepository.findById(trackId)
+                        .orElseThrow(() -> new NotFoundException(
+                                "Указанный трек не найден"));
+                track.setAlbum(album);
+                newTracks.add(track);
+            }
+        }
+        album.setTracks(newTracks);
+
+        List<Track> tracksToRemove = oldTracks.stream()
+                .filter(oldTrack -> !newTracks.contains(oldTrack))
+                .toList();
+
+        tracksToRemove.forEach(track -> {
+            track.setAlbum(null);
+            trackRepository.save(track);
+        });
         cache.clear();
         return albumRepository.save(album);
     }

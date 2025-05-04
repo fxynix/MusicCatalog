@@ -23,7 +23,6 @@ public class LogService {
     private final Map<String, String> logFiles = new ConcurrentHashMap<>();
     private final Map<String, String> taskStatus = new ConcurrentHashMap<>();
 
-
     @Async
     public CompletableFuture<String> generateLogFileForDateAsync(String date) {
         String taskId = UUID.randomUUID().toString();

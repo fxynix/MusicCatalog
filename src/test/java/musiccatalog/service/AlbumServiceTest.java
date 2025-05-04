@@ -64,7 +64,6 @@ class AlbumServiceTest {
         testAlbum.setTracks(new ArrayList<>(List.of(testTrack)));
     }
 
-    // region Create Album Tests
     @Test
     void createAlbum_WithValidData_ShouldSaveSuccessfully() {
         AlbumCreateDto dto = new AlbumCreateDto();
@@ -162,9 +161,7 @@ class AlbumServiceTest {
         assertEquals(1, result.getArtists().size());
         verify(cache).clear();
     }
-    // endregion
 
-    // region Get Album Tests
     @Test
     void getAlbumById_WhenCached_ShouldReturnFromCache() {
         String cacheKey = "albums_id_1";
@@ -218,9 +215,7 @@ class AlbumServiceTest {
         assertThrows(NotFoundException.class,
                 () -> albumService.getAlbumsByGenreName(genre));
     }
-    // endregion
 
-    // region Delete Album Tests
     @Test
     void deleteAlbum_ShouldRemoveFromDatabase() {
         when(albumRepository.findById(1L)).thenReturn(Optional.of(testAlbum));
@@ -238,9 +233,7 @@ class AlbumServiceTest {
         assertThrows(NotFoundException.class,
                 () -> albumService.deleteAlbum(99L));
     }
-    // endregion
 
-    // region Relationships Tests
     @Test
     void updateAlbum_ShouldMaintainBidirectionalRelationship() {
         Artist newArtist = new Artist();
@@ -259,5 +252,4 @@ class AlbumServiceTest {
         assertTrue(newArtist.getAlbums().contains(testAlbum));
         assertFalse(testArtist.getAlbums().contains(testAlbum));
     }
-    // endregion
 }

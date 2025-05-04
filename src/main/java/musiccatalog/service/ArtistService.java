@@ -1,5 +1,6 @@
 package musiccatalog.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import musiccatalog.cache.InMemoryCache;
@@ -63,21 +64,39 @@ public class ArtistService {
     public Artist updateArtist(long id, ArtistUpdateDto artistDto) {
         Artist artist = getArtistById(id)
                 .orElseThrow(() -> new NotFoundException("Не найдено исполнителя с ID " + id));
-        if (artistDto.getAlbumsIds() != null) {
-            artist.setAlbums(albumRepository.findAllById(artistDto.getAlbumsIds()));
-        }
+
         if (artistDto.getName() != null) {
             artist.setName(artistDto.getName());
         }
-        List<Album> albums;
+        List<Album> currentAlbums = new ArrayList<>(artist.getAlbums());
+
+        List<Album> newAlbums = new ArrayList<>();
         if (artistDto.getAlbumsIds() != null) {
-            albums = artistDto.getAlbumsIds().stream().map(albumId ->
-                    albumRepository.findById(albumId)
-                        .orElseThrow(() ->
-                                new NotFoundException(
-                                     "Не найдено указанного альбома исполнителя"))).toList();
-            artist.setAlbums(albums);
+            for (Long albumId : artistDto.getAlbumsIds()) {
+                Album album = albumRepository.findById(albumId)
+                        .orElseThrow(() -> new NotFoundException("Альбом не найден"));
+
+                if (!album.getArtists().contains(artist)) {
+                    album.getArtists().add(artist);
+                    albumRepository.save(album);
+                }
+
+                if (!newAlbums.contains(album)) {
+                    newAlbums.add(album);
+                }
+            }
         }
+
+        List<Album> albumsToRemove = currentAlbums.stream()
+                .filter(album -> !newAlbums.contains(album))
+                .toList();
+
+        for (Album album : albumsToRemove) {
+            album.getArtists().remove(artist);
+            albumRepository.save(album);
+        }
+
+        artist.setAlbums(newAlbums);
         cache.clear();
         return artistRepository.save(artist);
 

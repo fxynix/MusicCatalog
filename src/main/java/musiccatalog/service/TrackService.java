@@ -84,35 +84,57 @@ public class TrackService {
     }
 
     public Track updateTrack(long id, TrackUpdateDto trackDto) {
-        Track track = getTrackById(id)
-                .orElseThrow(() -> new NotFoundException("Не найдено трека с ID = " + id));
-        if (trackDto.getAlbumId() != null) {
-            track.setAlbum(albumRepository.findById(trackDto.getAlbumId())
-                    .orElseThrow(() ->
-                        new NotFoundException("Не найдено альбома, к которому принадлежит трек")));
-        }
+        Track track = trackRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Не найден трек с ID = " + id));
+
+        Album oldAlbum = track.getAlbum();
+
         if (trackDto.getName() != null) {
             track.setName(trackDto.getName());
         }
         if (trackDto.getDuration() != null) {
             track.setDuration(trackDto.getDuration());
         }
-        if (trackDto.getGenresIds() != null) {
-            track.setGenres(genreRepository.findAllById(trackDto.getGenresIds()));
+
+        if (trackDto.getAlbumId() != null) {
+            Album newAlbum = albumRepository.findById(trackDto.getAlbumId())
+                    .orElseThrow(() -> new NotFoundException("Не найден альбом с ID = "
+                            + trackDto.getAlbumId()));
+            if (oldAlbum != null && !oldAlbum.getId().equals(newAlbum.getId())) {
+                oldAlbum.getTracks().remove(track);
+                albumRepository.save(oldAlbum);
+            }
+
+            if (!newAlbum.getTracks().contains(track)) {
+                newAlbum.getTracks().add(track);
+                albumRepository.save(newAlbum);
+            }
+
+            track.setAlbum(newAlbum);
+        } else if (oldAlbum != null) {
+            oldAlbum.getTracks().remove(track);
+            albumRepository.save(oldAlbum);
+            track.setAlbum(null);
         }
-        List<Genre> genres = new ArrayList<>();
-        if (trackDto.getGenresIds() != null && !trackDto.getGenresIds().isEmpty()) {
+
+        if (trackDto.getGenresIds() != null) {
+            List<Genre> genres = new ArrayList<>();
+            for (Genre oldGenre : track.getGenres()) {
+                oldGenre.getTracks().remove(track);
+            }
+
             for (Long genreId : trackDto.getGenresIds()) {
                 Genre genre = genreRepository.findById(genreId)
-                        .orElseThrow(() -> new NotFoundException("Указанный жанр не найден"));
+                        .orElseThrow(() -> new NotFoundException("Не найден жанр с ID = "
+                                + genreId));
                 genre.getTracks().add(track);
                 genres.add(genre);
             }
             track.setGenres(genres);
         }
+
         cache.clear();
         return trackRepository.save(track);
-
     }
 
     public void deleteTrack(Long id) {

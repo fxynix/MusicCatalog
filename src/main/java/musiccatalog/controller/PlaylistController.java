@@ -77,6 +77,23 @@ public class PlaylistController {
                 .toList());
     }
 
+    @GetMapping(params = "authorId")
+    @Operation(summary = "Получить плейлист по id автора",
+            description = "Возвращает плейлист по id автора")
+    @ApiResponse(responseCode = "200", description = "Плейлист найден успешно")
+    @ApiResponse(responseCode = "404", description = "Плейлистов не найдено")
+    public ResponseEntity<List<PlaylistGetDto>> getPlaylistByAuthor(
+            @Parameter(description = "ID автора плейлиста", example = "1")
+            @RequestParam Long authorId) {
+        List<Playlist> playlists = playlistService.getPlaylistByAuthor(authorId);
+        if (playlists.isEmpty()) {
+            throw new NotFoundException("Плейлистов указанного автора не найдено");
+        }
+        return ResponseEntity.ok(playlists.stream()
+                .map(PlaylistGetDto::new)
+                .toList());
+    }
+
     @PostMapping
     @Operation(summary = "Создать новый плейлист",
             description = "Создаёт новый плейлист")

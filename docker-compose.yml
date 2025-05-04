@@ -1,0 +1,52 @@
+services:
+
+  backend:
+   build:
+      context: .
+      dockerfile: Dockerfile.backend
+   ports:
+      - "8080:8080"
+   environment:
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_SQL_INIT_MODE=always
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/MusicCatalog
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=147258369
+   depends_on:
+     db:
+       condition: service_started
+   networks:
+     - music-network
+
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - music-network
+
+
+  db:
+    image: postgres:15
+    container_name: music-db
+    environment:
+      POSTGRES_DB: MusicCatalog
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 147258369
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - music-network
+
+
+networks:
+  music-network:
+    driver: bridge
+
+volumes:
+  db-data:

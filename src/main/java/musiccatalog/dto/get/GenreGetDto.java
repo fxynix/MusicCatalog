@@ -16,6 +16,8 @@ public class GenreGetDto {
         this.name = genre.getName();
         if (genre.getTracks() != null) {
             this.tracksCount = genre.getTracks().size();
+        } else {
+            this.tracksCount = 0;
         }
     }
 

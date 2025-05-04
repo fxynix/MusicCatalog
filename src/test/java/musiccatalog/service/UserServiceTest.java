@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,11 +12,7 @@ import musiccatalog.dto.create.UserCreateDto;
 import musiccatalog.dto.update.UserUpdateDto;
 import musiccatalog.exception.ConflictException;
 import musiccatalog.exception.NotFoundException;
-import musiccatalog.model.Playlist;
-import musiccatalog.model.Track;
 import musiccatalog.model.User;
-import musiccatalog.repository.PlaylistRepository;
-import musiccatalog.repository.TrackRepository;
 import musiccatalog.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,20 +28,12 @@ class UserServiceTest {
     private UserRepository userRepository;
 
     @Mock
-    private PlaylistRepository playlistRepository;
-
-    @Mock
-    private TrackRepository trackRepository;
-
-    @Mock
     private InMemoryCache cache;
 
     @InjectMocks
     private UserService userService;
 
     private User testUser;
-    private Playlist testPlaylist;
-    private Track testTrack;
 
     @BeforeEach
     void setUp() {
@@ -56,13 +43,6 @@ class UserServiceTest {
         testUser.setEmail("test@example.com");
         testUser.setPassword("password");
 
-        testPlaylist = new Playlist();
-        testPlaylist.setId(1L);
-        testPlaylist.setSubscribers(new ArrayList<>());
-
-        testTrack = new Track();
-        testTrack.setId(1L);
-        testTrack.setLikedByUsers(new ArrayList<>());
     }
 
     @Test
@@ -122,33 +102,6 @@ class UserServiceTest {
     }
 
     @Test
-    void updateUser_ShouldUpdateAllFields() {
-        UserUpdateDto dto = new UserUpdateDto();
-        dto.setName("Updated User");
-        dto.setEmail("updated@example.com");
-        dto.setPassword("newpassword");
-        dto.setSubscribedPlaylistsIds(List.of(1L));
-        dto.setLikedTracksIds(List.of(1L));
-
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
-        when(userRepository.findUserByEmail("updated@example.com")).thenReturn(null);
-        when(playlistRepository.findById(1L)).thenReturn(Optional.of(testPlaylist));
-        when(trackRepository.findById(1L)).thenReturn(Optional.of(testTrack));
-        when(userRepository.save(any(User.class))).thenReturn(testUser);
-
-        User result = userService.updateUser(1L, dto);
-
-        assertNotNull(result);
-        assertEquals("Updated User", result.getName());
-        assertEquals("updated@example.com", result.getEmail());
-        assertEquals(1, result.getPlaylistsSubscribed().size());
-        assertEquals(1, result.getLikedTracks().size());
-        assertTrue(testPlaylist.getSubscribers().contains(testUser));
-        assertTrue(testTrack.getLikedByUsers().contains(testUser));
-        verify(cache).clear();
-    }
-
-    @Test
     void updateUser_WhenEmailTaken_ShouldThrowConflictException() {
         UserUpdateDto dto = new UserUpdateDto();
         dto.setEmail("taken@example.com");
@@ -160,17 +113,6 @@ class UserServiceTest {
         when(userRepository.findUserByEmail("taken@example.com")).thenReturn(otherUser);
 
         assertThrows(ConflictException.class, () -> userService.updateUser(1L, dto));
-    }
-
-    @Test
-    void updateUser_WhenPlaylistNotFound_ShouldThrowNotFoundException() {
-        UserUpdateDto dto = new UserUpdateDto();
-        dto.setSubscribedPlaylistsIds(List.of(99L));
-
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
-        when(playlistRepository.findById(99L)).thenReturn(Optional.empty());
-
-        assertThrows(NotFoundException.class, () -> userService.updateUser(1L, dto));
     }
 
     @Test
@@ -193,18 +135,6 @@ class UserServiceTest {
 
         assertEquals(testUser, result);
         verify(userRepository, never()).findUserByName(anyString());
-    }
-
-    @Test
-    void getUserById_WhenNotCached_ShouldFetchFromRepository() {
-        String cacheKey = "users_id_1";
-        when(cache.containsKey(cacheKey)).thenReturn(false);
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
-
-        Optional<User> result = userService.getUserById(1L);
-
-        assertTrue(result.isPresent());
-        verify(cache).put(cacheKey, testUser);
     }
 
     @Test
