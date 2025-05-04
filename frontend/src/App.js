@@ -179,6 +179,8 @@ const AppContent = () => {
 };
 
 const UserDropdown = ({ user, onLogout }) => {
+    const navigate = useNavigate();
+
     return (
         <Dropdown
             menu={{
@@ -187,7 +189,7 @@ const UserDropdown = ({ user, onLogout }) => {
                         key: 'profile',
                         icon: <InfoCircleOutlined />,
                         label: 'Profile',
-                        onClick: () => window.location.href = `/users/${user.id}/profile`
+                        onClick: () => navigate(`/users/${user.id}/profile`)
                     },
                     {
                         key: 'logout',
@@ -198,6 +200,7 @@ const UserDropdown = ({ user, onLogout }) => {
                 ]
             }}
             trigger={['click']}
+        >
         >
             <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', marginRight: 24 }}>
                 <span style={{ marginRight: 8 }}>{user.name}</span>

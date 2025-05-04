@@ -55,15 +55,25 @@ const UserList = ({ currentUser, onUserUpdate }) => {
 
             setIsModalVisible(false);
         } catch (error) {
-            if ((error.response?.status === 400 || error.response?.status === 409) && error.response.data) {
+            if (error.response?.status === 400 && error.response.data) {
                 const errorMessages = Object.entries(error.response.data)
                     .map(([field, message]) => `${message}`)
                     .join('\n');
 
                 message.error({
                     content: (
-                        <div style={{ whiteSpace: 'pre-line' }}>
+                        <div style={{whiteSpace: 'pre-line'}}>
                             {errorMessages}
+                        </div>
+                    ),
+                    duration: 5,
+                });
+            } else if (error.response?.status === 409) {
+                const errorMessage = error.response.message;
+                message.error({
+                    content: (
+                        <div style={{whiteSpace: 'pre-line'}}>
+                            {errorMessage}
                         </div>
                     ),
                     duration: 5,

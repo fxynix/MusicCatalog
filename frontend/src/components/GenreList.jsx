@@ -64,7 +64,7 @@ const GenreList = () => {
       fetchGenres();
       setIsModalVisible(false);
     } catch (error) {
-      if (error.response?.status === 400 || error.response?.status === 409) {
+      if (error.response?.status === 400) {
         const errorMessages = Object.entries(error.response.data)
             .flatMap(([field, errors]) =>
                 Array.isArray(errors)
@@ -76,6 +76,16 @@ const GenreList = () => {
         message.error({
           content: <div style={{ whiteSpace: 'pre-line' }}>{errorMessages}</div>,
           duration: 5
+        });
+      } else if (error.response?.status === 409) {
+        const errorMessage = error.response.message;
+        message.error({
+          content: (
+              <div style={{whiteSpace: 'pre-line'}}>
+                {errorMessage}
+              </div>
+          ),
+          duration: 5,
         });
       } else {
         message.error(error.response?.data?.message || 'Failed to save genre');
