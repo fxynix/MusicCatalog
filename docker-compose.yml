@@ -32,7 +32,7 @@ services:
 
 
   db:
-    image: postgres:16
+    image: postgres:15
     container_name: music-db
     environment:
       POSTGRES_DB: MusicCatalog
