@@ -34,7 +34,6 @@ const PlaylistList = () => {
       setPlaylists(response.data);
     } catch (error) {
       if (authorId) {
-        message.error('Not found author\'s playlists');
         setPlaylists(null);
       } else {
         message.error('Failed to fetch playlists');
