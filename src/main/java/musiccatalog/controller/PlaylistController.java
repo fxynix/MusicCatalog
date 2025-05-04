@@ -88,7 +88,7 @@ public class PlaylistController {
             @RequestParam Long authorId) {
         List<Playlist> playlists = playlistService.getPlaylistByAuthor(authorId);
         if (playlists.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            return ResponseEntity.status(HttpStatus.OK)
                     .body(Collections.emptyList());
         }
         return ResponseEntity.ok(playlists.stream()

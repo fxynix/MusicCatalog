@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Table, Button, Space, Modal, Form, Input, Select, message } from 'antd';
+import {Table, Button, Space, Modal, Form, Input, Select, message} from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import axios from 'axios';
 
@@ -33,7 +33,12 @@ const PlaylistList = () => {
       const response = await axios.get(url);
       setPlaylists(response.data);
     } catch (error) {
-      message.error('Failed to fetch playlists');
+      if (authorId) {
+        message.error('Not found author\'s playlists');
+        setPlaylists(null);
+      } else {
+        message.error('Failed to fetch playlists');
+      }
     }
   };
 

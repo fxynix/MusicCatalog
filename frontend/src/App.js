@@ -105,7 +105,6 @@ const AppContent = () => {
                 <Header className="site-layout-background" style={{ padding: 0, display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
                     {user ? (
                         <>
-                            const navigate = useNavigate();
                             <Button
                                 type="link"
                                 style={{ marginRight: 16 }}
@@ -181,7 +180,6 @@ const AppContent = () => {
 
 const UserDropdown = ({ user, onLogout }) => {
     const navigate = useNavigate();
-
     return (
         <Dropdown
             menu={{
@@ -202,11 +200,10 @@ const UserDropdown = ({ user, onLogout }) => {
             }}
             trigger={['click']}
         >
-        >
-            <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', marginRight: 24 }}>
-                <span style={{ marginRight: 8 }}>{user.name}</span>
-                <UserOutlined style={{ fontSize: '20px' }} />
-            </div>
+        <span style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', marginRight: 24 }}>
+          <span style={{ marginRight: 8 }}>{user.name}</span>
+          <UserOutlined style={{ fontSize: '20px' }} />
+        </span>
         </Dropdown>
     );
 };
