@@ -55,7 +55,7 @@ const TrackList = () => {
         name: track.name,
         duration: track.duration,
         albumId: albums.find(a => a.name === track.albumName)?.id,
-        genreIds: genres
+        genresIds: genres
             .filter(genre => track.genres?.includes(genre.name))
             .map(genre => genre.id) || []
       });
@@ -64,7 +64,7 @@ const TrackList = () => {
         name: '',
         duration: undefined,
         albumId: undefined,
-        genreIds: []
+        genresIds: []
       });
     }
     setIsModalVisible(true);
@@ -76,8 +76,9 @@ const TrackList = () => {
         name: values.name,
         duration: values.duration,
         albumId: values.albumId,
-        genresIds: editingTrack ? values.genreIds : undefined
+        genresIds: values.genresIds
       };
+      console.log(values);
 
       if (editingTrack) {
         await axios.patch(
@@ -242,7 +243,7 @@ const TrackList = () => {
             </Form.Item>
 
             <Form.Item
-                name="genreIds"
+                name="genresIds"
                 label="Genres"
                 required={true}
             >
