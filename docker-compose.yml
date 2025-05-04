@@ -9,9 +9,9 @@ services:
    environment:
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - SPRING_SQL_INIT_MODE=always
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/MusicCatalog
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=147258369
+      - SPRING_DATASOURCE_URL=${ONLINE_DATASOURCE_URL}
+      - SPRING_DATASOURCE_USERNAME=${ONLINE_DATASOURCE_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${ONLINE_DATASOURCE_PASSWORD}
    depends_on:
      db:
        condition: service_started
@@ -35,9 +35,9 @@ services:
     image: postgres:15
     container_name: music-db
     environment:
-      POSTGRES_DB: MusicCatalog
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 147258369
+      POSTGRES_DB: ${ONLINE_DATASOURCE_NAME}
+      POSTGRES_USER: ${ONLINE_DATASOURCE_USERNAME}
+      POSTGRES_PASSWORD: ${ONLINE_DATASOURCE_PASSWORD}
     volumes:
       - db-data:/var/lib/postgresql/data
     networks:
