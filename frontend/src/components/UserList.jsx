@@ -55,7 +55,7 @@ const UserList = ({ currentUser, onUserUpdate }) => {
 
             setIsModalVisible(false);
         } catch (error) {
-            if (error.response?.status === 400 && error.response.data) {
+            if ((error.response?.status === 400 || error.response?.status === 409) && error.response.data) {
                 const errorMessages = Object.entries(error.response.data)
                     .map(([field, message]) => `${message}`)
                     .join('\n');
@@ -71,7 +71,7 @@ const UserList = ({ currentUser, onUserUpdate }) => {
             } else if (error.response?.data?.message) {
                 message.error(error.response.data.message);
             } else {
-                message.error('Произошла ошибка при обновлении пользователя');
+                message.error('Failed to save user');
             }
         }
     };

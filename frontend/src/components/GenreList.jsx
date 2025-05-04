@@ -64,7 +64,7 @@ const GenreList = () => {
       fetchGenres();
       setIsModalVisible(false);
     } catch (error) {
-      if (error.response?.status === 400) {
+      if (error.response?.status === 400 || error.response?.status === 409) {
         const errorMessages = Object.entries(error.response.data)
             .flatMap(([field, errors]) =>
                 Array.isArray(errors)

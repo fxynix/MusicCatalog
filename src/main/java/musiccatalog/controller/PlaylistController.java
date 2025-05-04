@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.Collections;
 import java.util.List;
 import musiccatalog.dto.create.PlaylistCreateDto;
 import musiccatalog.dto.get.PlaylistGetDto;
@@ -87,7 +88,8 @@ public class PlaylistController {
             @RequestParam Long authorId) {
         List<Playlist> playlists = playlistService.getPlaylistByAuthor(authorId);
         if (playlists.isEmpty()) {
-            throw new NotFoundException("Плейлистов указанного автора не найдено");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Collections.emptyList());
         }
         return ResponseEntity.ok(playlists.stream()
                 .map(PlaylistGetDto::new)

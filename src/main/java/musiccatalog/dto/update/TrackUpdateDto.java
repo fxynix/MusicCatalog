@@ -2,6 +2,7 @@ package musiccatalog.dto.update;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import java.util.List;
@@ -20,10 +21,11 @@ public class TrackUpdateDto {
     @Max(value = 3600, message = "Длительность трека не может быть больше 1 часа")
     private Integer duration;
 
+    @NotEmpty(message = "Трек должен иметь хоть 1 жанр")
     private List<@Positive(message =
             "ID жанров, к которым отнисится трек, должны быть положительными") Long> genresIds;
 
-    @Positive(message = "ID альбома, к которому отнисится трек, должен быть положительным")
+    @Positive(message = "Трек должен относиться хоть к какому-то альбому")
     private Long albumId;
 
     @Override

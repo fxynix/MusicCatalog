@@ -106,6 +106,10 @@ public class ArtistService {
         Artist artist = artistRepository.findById(id)
                 .orElseThrow(() ->
                         new NotFoundException("Не найдено исполнителя с ID = " + id));
+        for (Album album : artist.getAlbums()) {
+            album.getArtists().remove(artist);
+            albumRepository.save(album);
+        }
         artistRepository.delete(artist);
         cache.clear();
     }

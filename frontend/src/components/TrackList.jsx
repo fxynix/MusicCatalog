@@ -244,6 +244,7 @@ const TrackList = () => {
             <Form.Item
                 name="genreIds"
                 label="Genres"
+                required={true}
             >
               <Select
                   mode="multiple"
