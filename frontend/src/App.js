@@ -105,11 +105,12 @@ const AppContent = () => {
                 <Header className="site-layout-background" style={{ padding: 0, display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
                     {user ? (
                         <>
+                            const navigate = useNavigate();
                             <Button
                                 type="link"
                                 style={{ marginRight: 16 }}
                                 icon={<UnorderedListOutlined />}
-                                onClick={() => window.location.href = `/playlists?authorId=${user.id}&refresh=${Date.now()}`}
+                                onClick={() => navigate(`/playlists?authorId=${user.id}&refresh=${Date.now()}`)}
                             >
                                 My Playlists
                             </Button>
