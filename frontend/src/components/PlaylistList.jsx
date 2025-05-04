@@ -71,11 +71,16 @@ const PlaylistList = () => {
             .map(track => track.id) || []
       });
     } else {
-      form.setFieldsValue({
+      const initialValues = {
         name: '',
-        authorId: undefined,
         tracksIds: []
-      });
+      };
+
+      if (authorId) {
+        initialValues.authorId = parseInt(authorId);
+      }
+
+      form.setFieldsValue(initialValues);
     }
     setIsModalVisible(true);
   };

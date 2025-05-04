@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 import { Layout, Menu, Dropdown, Modal, Form, Input, Button, message } from 'antd';
 import {
     CustomerServiceOutlined,
@@ -12,7 +12,8 @@ import {
     LogoutOutlined,
     InfoCircleOutlined,
     UnorderedListOutlined,
-    MailOutlined, LockOutlined
+    MailOutlined,
+    LockOutlined
 } from '@ant-design/icons';
 import axios from 'axios';
 import TrackList from "./components/TrackList";
@@ -33,6 +34,18 @@ const AppContent = () => {
     const [isAuthModalVisible, setIsAuthModalVisible] = useState(false);
     const [authForm] = Form.useForm();
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const getSelectedMenuKey = () => {
+        const path = location.pathname;
+        if (path.startsWith('/tracks')) return '1';
+        if (path.startsWith('/artists')) return '2';
+        if (path.startsWith('/albums')) return '3';
+        if (path.startsWith('/genres')) return '4';
+        if (path.startsWith('/playlists')) return '5';
+        if (path.startsWith('/users')) return '6';
+        return '1';
+    };
 
     const handleAuth = async () => {
         try {
@@ -62,10 +75,9 @@ const AppContent = () => {
 
         if (location.pathname.includes('/users/') ||
             new URLSearchParams(location.search).has('authorId')) {
-                navigate('/tracks'); // Перенаправляем на страницу треков
+            navigate('/tracks');
         }
     };
-
 
     const handleUserUpdate = (updatedUser) => {
         setUser(updatedUser);
@@ -77,10 +89,14 @@ const AppContent = () => {
             <Sider collapsible>
                 <div className="logo" style={{ height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Link to="/tracks">
-                        <CustomerServiceOutlined style={{ color: '#fff', fontSize: '24px' }} />
+                        <CustomerServiceOutlined style={{ color: '#fff', fontSize: '40px' }} />
                     </Link>
                 </div>
-                <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
+                <Menu
+                    theme="dark"
+                    selectedKeys={[getSelectedMenuKey()]}
+                    mode="inline"
+                >
                     <Menu.Item key="1" icon={<PlaySquareOutlined />}>
                         <Link to="/tracks">Tracks</Link>
                     </Menu.Item>
@@ -118,7 +134,7 @@ const AppContent = () => {
                     ) : (
                         <Button
                             type="link"
-                            icon={<UserOutlined />}
+                            icon={<UserOutlined style={{ fontSize: '24px' }}  />}
                             style={{ marginRight: 24 }}
                             onClick={() => setIsAuthModalVisible(true)}
                         >
@@ -202,7 +218,7 @@ const UserDropdown = ({ user, onLogout }) => {
         >
         <span style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', marginRight: 24 }}>
           <span style={{ marginRight: 8 }}>{user.name}</span>
-          <UserOutlined style={{ fontSize: '20px' }} />
+          <UserOutlined style={{ fontSize: '24px' }} />
         </span>
         </Dropdown>
     );

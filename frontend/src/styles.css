@@ -12,6 +12,10 @@ body {
   background: #fff;
 }
 
+.ant-menu-item {
+  font-size: 1.25em;
+}
+
 .actions {
   margin-bottom: 16px;
 }

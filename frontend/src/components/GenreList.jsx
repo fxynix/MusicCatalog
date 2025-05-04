@@ -78,14 +78,9 @@ const GenreList = () => {
           duration: 5
         });
       } else if (error.response?.status === 409) {
-        const errorMessage = error.response.message;
-        message.error({
-          content: (
-              <div style={{whiteSpace: 'pre-line'}}>
-                {errorMessage}
-              </div>
-          ),
-          duration: 5,
+          message.error({
+          content: error.response.data,
+          duration:5,
         });
       } else {
         message.error(error.response?.data?.message || 'Failed to save genre');
