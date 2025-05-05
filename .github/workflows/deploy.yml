@@ -11,6 +11,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Generate Maven Wrapper
+        run: mvn -N io.takari:maven:wrapper
+        
       # Шаг 2: Сборка backend (Java)
       - name: Build backend JAR
         run: |
