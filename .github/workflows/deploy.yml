@@ -46,17 +46,14 @@ jobs:
          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/frontend:latest
 
       # Шаг 6: Деплой на Render.com через API
-      - name: Deploy Backend
-        run: |
-          curl -X POST \
-            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            "https://api.render.com/v1/web-services/${{ secrets.RENDER_SERVICE_ID_BACKEND }}/deploys" \
-            -d '{"clearCache": "do_not_clear"}'
-      - name: Deploy Frontend
-        run: |
-         curl -X POST \
-            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            "https://api.render.com/v1/web-services/${{ secrets.RENDER_SERVICE_ID_FRONTEND }}/deploys" \
-            -d '{"clearCache": "do_not_clear"}'
+      - name: Deploy BACK to Render
+        uses: render-actions/deploy@v1
+        with:
+         apiKey: ${{ secrets.RENDER_API_KEY }}
+         serviceId: ${{ secrets.RENDER_SERVICE_ID_BACKEND }}
+
+      - name: Deploy FRONT to Render
+        uses: render-actions/deploy@v1
+        with:
+         apiKey: ${{ secrets.RENDER_API_KEY }}
+         serviceId: ${{ secrets.RENDER_SERVICE_ID_FRONTEND }}
