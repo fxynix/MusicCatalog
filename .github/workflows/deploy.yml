@@ -34,6 +34,19 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
+
+#####################
+      - name: Verify Service ID
+        run: |
+          echo "Backend Service ID: ${{ secrets.RENDER_SERVICE_ID_BACKEND }}"
+          echo "Frontend Service ID: ${{ secrets.RENDER_SERVICE_ID_FRONTEND }}"
+
+      - name: Test API Access
+        run: |
+         curl -s -X GET \
+         -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+         "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID_BACKEND }}" | jq
+         
       # Шаг 5: Собираем Docker-образы
       - name: Build and push backend image
         run: |
