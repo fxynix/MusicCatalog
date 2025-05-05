@@ -33,19 +33,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
-
-
-#####################
-      - name: Verify Service ID
-        run: |
-          echo "Backend Service ID: ${{ secrets.RENDER_SERVICE_ID_BACKEND }}"
-          echo "Frontend Service ID: ${{ secrets.RENDER_SERVICE_ID_FRONTEND }}"
-
-      - name: Test API Access
-        run: |
-         curl -s -X GET \
-         -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
-         "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID_BACKEND }}" | jq
          
       # Шаг 5: Собираем Docker-образы
       - name: Build and push backend image
@@ -64,12 +51,12 @@ jobs:
           curl -X POST \
             -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
             -H "Content-Type: application/json" \
-            "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID_BACKEND }}/deploys" \
+            "https://api.render.com/v1/web-services/${{ secrets.RENDER_SERVICE_ID_BACKEND }}/deploys" \
             -d '{"clearCache": "do_not_clear"}'
       - name: Deploy Frontend
         run: |
          curl -X POST \
             -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
             -H "Content-Type: application/json" \
-            "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID_FRONTEND }}/deploys" \
+            "https://api.render.com/v1/web-services/${{ secrets.RENDER_SERVICE_ID_FRONTEND }}/deploys" \
             -d '{"clearCache": "do_not_clear"}'
