@@ -42,8 +42,8 @@ jobs:
 
       - name: Build and push frontend image
         run: |
-          docker build -t your-dockerhub/frontend:latest -f Dockerfile.frontend .
-          docker push your-dockerhub/frontend:latest
+         docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/backend:latest -f Dockerfile.backend .
+         docker push ${{ secrets.DOCKER_HUB_USERNAME }}/backend:latest
 
       # Шаг 6: Деплой на Render.com через API
       - name: Deploy backend to Render
