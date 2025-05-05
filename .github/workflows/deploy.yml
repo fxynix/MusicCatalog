@@ -52,11 +52,10 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
             -H "Content-Type: application/json" \
             "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID_BACKEND }}/deploys" \
-            -d '{"clearCache": "do_not_clear"}
-
+            -d '{"clearCache": "do_not_clear"}'
       - name: Deploy Frontend
         run: |
-          curl -X POST \
+         curl -X POST \
             -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
             -H "Content-Type: application/json" \
             "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID_FRONTEND }}/deploys" \
