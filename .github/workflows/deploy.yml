@@ -1,59 +1,48 @@
 name: Deploy to Render
 on:
   push:
-    branches: [ "master" ]  
+    branches: [ "master" ]
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      # Шаг 1: Забираем код из репозитория
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Generate Maven Wrapper
-        run: mvn -N io.takari:maven:wrapper
-        
-      # Шаг 2: Сборка backend (Java)
-      - name: Build backend JAR
+      # Проверка подключения к Render API
+      - name: Verify Render API Access
         run: |
-          chmod +x mvnw
-          ./mvnw clean package -DskipTests
+          echo "Service ID: ${{ secrets.RENDER_SERVICE_ID_BACKEND }}"
+          curl -v -X GET \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID_BACKEND }}"
 
-      # Шаг 3: Сборка frontend (если нужно)
-      - name: Build frontend
+      # Деплой через прямые API-запросы
+      - name: Deploy Backend
         run: |
-          cd frontend
-          npm install
-          npm run build
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID_BACKEND }}/deploys" \
+            -d '{"clearCache": "do_not_clear"}')
+          
+          if [ "$RESPONSE" -ne 200 ]; then
+            echo "Deploy failed with status $RESPONSE"
+            exit 1
+          fi
+          echo "Deploy triggered successfully"
 
-      # Шаг 4: Логинимся в Docker Hub (если образы пушатся в registry)
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_TOKEN }}
-         
-      # Шаг 5: Собираем Docker-образы
-      - name: Build and push backend image
+      - name: Deploy Frontend
         run: |
-          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/backend:latest -f Dockerfile.backend .
-          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/backend:latest
-
-      - name: Build and push frontend image
-        run: |
-         docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/frontend:latest -f Dockerfile.frontend .
-         docker push ${{ secrets.DOCKER_HUB_USERNAME }}/frontend:latest
-
-      # Шаг 6: Деплой на Render.com через API
-      - name: Deploy BACK to Render
-        uses: render-actions/deploy@v1
-        with:
-         apiKey: ${{ secrets.RENDER_API_KEY }}
-         serviceId: ${{ secrets.RENDER_SERVICE_ID_BACKEND }}
-
-      - name: Deploy FRONT to Render
-        uses: render-actions/deploy@v1
-        with:
-         apiKey: ${{ secrets.RENDER_API_KEY }}
-         serviceId: ${{ secrets.RENDER_SERVICE_ID_FRONTEND }}
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            "https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID_FRONTEND }}/deploys" \
+            -d '{"clearCache": "do_not_clear"}')
+          
+          if [ "$RESPONSE" -ne 200 ]; then
+            echo "Deploy failed with status $RESPONSE"
+            exit 1
+          fi
+          echo "Deploy triggered successfully"
