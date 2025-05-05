@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Space, Modal, Form, Input, Select, message } from 'antd';
+import {Table, Button, Space, Modal, Form, Input, Select, message, Spin} from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import axios from 'axios';
 
@@ -12,6 +12,7 @@ const ArtistList = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingArtist, setEditingArtist] = useState(null);
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchArtists();
@@ -19,20 +20,26 @@ const ArtistList = () => {
   }, []);
 
   const fetchArtists = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/artists/all`);
       setArtists(response.data);
     } catch (error) {
       message.error('Failed to fetch artists');
+    } finally {
+      setLoading(false);
     }
   };
 
   const fetchAlbums = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/albums/all`);
       setAlbums(response.data);
     } catch (error) {
       message.error('Failed to fetch albums');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -118,6 +125,7 @@ const ArtistList = () => {
   };
 
   return (
+      <Spin spinning={loading} tip="Loading...">
       <div className="container">
         <div className="actions">
           <Button type="primary" icon={<PlusOutlined />} onClick={() => showModal()}>
@@ -193,6 +201,7 @@ const ArtistList = () => {
           </Form>
         </Modal>
       </div>
+      </Spin>
   );
 };
 

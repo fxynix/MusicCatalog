@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import {Table, Button, Space, Modal, Form, Input, Select, message} from 'antd';
+import {Table, Button, Space, Modal, Form, Input, Select, message, Spin} from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import axios from 'axios';
 
@@ -17,6 +17,8 @@ const PlaylistList = () => {
   const { search } = useLocation();
   const queryParams = new URLSearchParams(search);
   const authorId = queryParams.get('authorId');
+  const [loading, setLoading] = useState(false);
+
 
   useEffect(() => {
     fetchPlaylists();
@@ -25,6 +27,7 @@ const PlaylistList = () => {
   }, [authorId]);
 
   const fetchPlaylists = async () => {
+    setLoading(true);
     try {
       const url = authorId
           ? `${process.env.REACT_APP_API_URL}/playlists?authorId=${authorId}`
@@ -38,24 +41,32 @@ const PlaylistList = () => {
       } else {
         message.error('Failed to fetch playlists');
       }
+    } finally {
+      setLoading(false);
     }
   };
 
   const fetchUsers = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/users/all`);
       setUsers(response.data);
     } catch (error) {
       message.error('Failed to fetch users');
+    } finally {
+      setLoading(false);
     }
   };
 
   const fetchAllTracks = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/tracks/all`);
       setAllTracks(response.data);
     } catch (error) {
       message.error('Failed to fetch tracks');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -153,6 +164,7 @@ const PlaylistList = () => {
   };
 
   return (
+      <Spin spinning={loading} tip="Loading...">
       <div className="container">
         <div className="actions">
           <Button type="primary" icon={<PlusOutlined />} onClick={() => showModal()}>
@@ -249,6 +261,7 @@ const PlaylistList = () => {
           </Form>
         </Modal>
       </div>
+      </Spin>
   );
 };
 

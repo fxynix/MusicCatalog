@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Space, Modal, Form, Input, message } from 'antd';
+import {Table, Button, Space, Modal, Form, Input, message, Spin} from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import axios from 'axios';
 
@@ -10,17 +10,21 @@ const GenreList = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingGenre, setEditingGenre] = useState(null);
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchGenres();
   }, []);
 
   const fetchGenres = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/genres/all`);
       setGenres(response.data);
     } catch (error) {
       message.error('Failed to fetch genres');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -108,6 +112,7 @@ const GenreList = () => {
   };
 
   return (
+      <Spin spinning={loading} tip="Loading...">
       <div className="container">
         <div className="actions">
           <Button
@@ -165,6 +170,7 @@ const GenreList = () => {
           </Form>
         </Modal>
       </div>
+      </Spin>
   );
 };
 

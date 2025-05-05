@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Space, Modal, Form, Input, message } from 'antd';
+import {Table, Button, Space, Modal, Form, Input, message, Spin} from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, UserOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import Column from "antd/es/table/Column";
@@ -9,17 +9,21 @@ const UserList = ({ currentUser, onUserUpdate }) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [editingUser, setEditingUser] = useState(null);
     const [form] = Form.useForm();
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         fetchUsers();
     }, []);
 
     const fetchUsers = async () => {
+        setLoading(true);
         try {
             const response = await axios.get(`${process.env.REACT_APP_API_URL}/users/all`);
             setUsers(response.data);
         } catch (error) {
             message.error('Failed to fetch users');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -113,6 +117,7 @@ const UserList = ({ currentUser, onUserUpdate }) => {
     };
 
     return (
+        <Spin spinning={loading} tip="Loading...">
         <div className="container">
             <div className="actions">
                 <Button type="primary" icon={<PlusOutlined />} onClick={() => showModal()}>
@@ -180,6 +185,7 @@ const UserList = ({ currentUser, onUserUpdate }) => {
                 </Form>
             </Modal>
         </div>
+        </Spin>
     );
 };
 

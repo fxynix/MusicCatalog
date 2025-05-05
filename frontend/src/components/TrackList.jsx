@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Space, Modal, Form, Input, Select, Tag, message } from 'antd';
+import {Table, Button, Space, Modal, Form, Input, Select, Tag, message, Spin} from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import axios from 'axios';
 
@@ -13,6 +13,7 @@ const TrackList = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingTrack, setEditingTrack] = useState(null);
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchTracks();
@@ -21,29 +22,38 @@ const TrackList = () => {
   }, []);
 
   const fetchTracks = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/tracks/all`);
       setTracks(response.data);
     } catch (error) {
       message.error('Failed to fetch tracks');
+    } finally {
+      setLoading(false);
     }
   };
 
   const fetchAlbums = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/albums/all`);
       setAlbums(response.data);
     } catch (error) {
       message.error('Failed to fetch albums');
+    } finally {
+      setLoading(false);
     }
   };
 
   const fetchGenres = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/genres/all`);
       setGenres(response.data);
     } catch (error) {
       message.error('Failed to fetch genres');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -136,7 +146,8 @@ const TrackList = () => {
   };
 
   return (
-      <div className="container">
+      <Spin spinning={loading} tip="Loading...">
+        <div className="container">
         <div className="actions">
           <Button type="primary" icon={<PlusOutlined />} onClick={() => showModal()}>
             Add Track
@@ -263,7 +274,9 @@ const TrackList = () => {
           </Form>
         </Modal>
       </div>
+      </Spin>
   );
+
 };
 
 export default TrackList;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Space, Modal, Form, Input, Select, Tag, message } from 'antd';
+import {Table, Button, Space, Modal, Form, Input, Select, Tag, message, Spin} from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import axios from 'axios';
 
@@ -13,6 +13,7 @@ const AlbumList = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [editingAlbum, setEditingAlbum] = useState(null);
     const [form] = Form.useForm();
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         fetchAlbums();
@@ -21,29 +22,38 @@ const AlbumList = () => {
     }, []);
 
     const fetchAlbums = async () => {
+        setLoading(true);
         try {
             const response = await axios.get(`${process.env.REACT_APP_API_URL}/albums/all`);
             setAlbums(response.data);
         } catch (error) {
             message.error('Failed to fetch albums');
+        } finally {
+            setLoading(false);
         }
     };
 
     const fetchArtists = async () => {
+        setLoading(true);
         try {
             const response = await axios.get(`${process.env.REACT_APP_API_URL}/artists/all`);
             setArtists(response.data);
         } catch (error) {
             message.error('Failed to fetch artists');
+        } finally {
+            setLoading(false);
         }
     };
 
     const fetchTracks = async () => {
+        setLoading(true);
         try {
             const response = await axios.get(`${process.env.REACT_APP_API_URL}/tracks/all`);
             setTracks(response.data);
         } catch (error) {
             message.error('Failed to fetch tracks');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -137,6 +147,7 @@ const AlbumList = () => {
     };
 
     return (
+        <Spin spinning={loading} tip="Loading...">
         <div className="container">
             <div className="actions">
                 <Button type="primary" icon={<PlusOutlined />} onClick={() => showModal()}>
@@ -245,6 +256,7 @@ const AlbumList = () => {
                 </Form>
             </Modal>
         </div>
+        </Spin>
     );
 };
 
