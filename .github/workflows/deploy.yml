@@ -14,7 +14,6 @@ jobs:
       # Шаг 2: Сборка backend (Java)
       - name: Build backend JAR
         run: |
-          cd backend
           chmod +x mvnw
           ./mvnw clean package -DskipTests
 
