@@ -20,11 +20,11 @@ public class AuthService {
     public AuthResponse authenticate(AuthRequest authRequest) {
         User user = userRepository.findUserByEmail(authRequest.getEmail());
         if (user == null) {
-            throw (new AuthenticationException("Invalid credentials"));
+            throw (new AuthenticationException("Пользователь с таким email не найден"));
         }
 
         if (!user.getPassword().equals(authRequest.getPassword())) {
-            throw new AuthenticationException("Invalid credentials");
+            throw new AuthenticationException("Неверный пароль");
         }
 
         AuthResponse response = new AuthResponse();
