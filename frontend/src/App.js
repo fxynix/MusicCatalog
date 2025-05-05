@@ -64,7 +64,7 @@ const AppContent = () => {
             setIsAuthModalVisible(false);
             message.success('Logged in successfully');
         } catch (error) {
-            message.error(error.response?.data?.message || 'Login failed');
+            message.error(error.response?.data || 'Login failed');
         }
     };
 
