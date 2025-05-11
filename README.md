@@ -19,3 +19,8 @@ Music Catalog — это приложения для управления муз
 [Sonar](https://sonarcloud.io/project/overview?id=fxynix_MusicCatalog)
 
 ---
+
+[FrontEnd](https://music-catalog-frontend.onrender.com/)
+[Backend Swagger](https://music-catalog-backend.onrender.com/swagger-ui/index.html)
+Просьба не потрошить БД
+Может открываться 3-5 минут, так как бесплатный хостинг Render вырубает сайт, если долго не обращаться к нему
